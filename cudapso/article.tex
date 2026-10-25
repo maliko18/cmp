@@ -1,0 +1,591 @@
+\documentclass[conference]{IEEEtran}
+
+% Commentaires et consignes de rédaction en français.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usetikzlibrary{arrows.meta,positioning,fit,shapes.geometric}
+
+\newcommand{\todo}[1]{\textcolor{red}{[\textbf{TODO:} #1]}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\PSO}{\textsc{PSO}}
+\newcommand{\DE}{\textsc{DE}}
+
+\title{A Corrected CUDA Particle Swarm Optimizer and a Planned Differential Evolution Study}
+
+\author{
+\IEEEauthorblockN{\todo{Author names}}
+\IEEEauthorblockA{University of Haute-Alsace\\
+\texttt{\todo{Author email addresses}}}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper reports the current state of a CUDA-based particle swarm
+optimization (PSO) project and defines the experimental framework for a
+subsequent comparison with differential evolution (DE). The implementation
+supports four shifted benchmark functions, a sequential reference, and a
+massively parallel CUDA version. Corrections address the original program's
+fixed parameters, evaluation budget, shared device temporaries, random-number
+generation, personal-best evaluation, and global-best communication. Two
+global-best strategies are available: a CPU scan with per-iteration memory
+transfers and a GPU reduction. A further PSO variant uses linearly decreasing
+inertia and a bounded velocity. Preliminary sequential results show that this
+variant resolves the observed high-dimensional Sphere divergence, while
+Rastrigin and Rosenbrock remain challenging at dimension 100. Reported GPU
+timings suggest that avoiding repeated global-best transfers can improve
+runtime, but a complete repeated campaign and a DE comparison remain future
+work.
+\end{abstract}
+
+\begin{IEEEkeywords}
+particle swarm optimization, CUDA, GPU, differential evolution, benchmark
+functions, parallel optimization
+\end{IEEEkeywords}
+
+\section{Introduction}
+Global optimization seeks a point minimizing an objective over a feasible
+domain:
+\begin{equation}
+  \min_{\mathbf{x}\in S} f(\mathbf{x}), \qquad S\subseteq\R^n.
+\end{equation}
+Population-based methods are attractive for this problem because candidate
+solutions can be evaluated concurrently. Particle swarm optimization, first
+introduced by Kennedy and Eberhart~\cite{kennedy1995pso}, updates a population
+using each particle's best known position and the best position found by the
+swarm. Differential evolution (DE) is a related population-based optimizer
+introduced by Storn and Price~\cite{storn1997de}.
+
+The project began with an instructor-provided CUDA PSO. Its original fixed
+dimensions and population, incorrect evaluation budget, shared device
+temporaries, and incomplete benchmark implementations motivated a corrected
+implementation. A sequential implementation and a second PSO variant were
+then added. This paper documents those implemented features and preliminary
+measurements; it does not present a completed DE implementation or a
+statistically complete comparison.
+
+The main contributions documented here are: (i) a shared CPU/GPU definition
+of four shifted objectives; (ii) a sequential and a CUDA PSO with selectable
+global-best handling; (iii) a safeguarded PSO variant for high-dimensional
+search; and (iv) an experimental plan for a future PSO--DE comparison.
+
+\section{GPU Programming}
+\label{sec:gpu}
+CUDA exposes a hierarchy of threads grouped into thread blocks. Threads in a
+kernel execute the same program on different indices; blocks are scheduled on
+the GPU and can be organized into a grid. The present implementation stores
+particle positions, velocities, personal bests, personal-best fitnesses, and
+global-best data in device global memory. The host allocates these arrays and
+copies the initial swarm to the GPU. Kernel launches perform the coordinate
+updates, personal-best updates, and, in one mode, global-best reduction.
+
+In the coordinate-update kernel, a linear thread index addresses one
+particle-coordinate pair. Its coordinate within the particle is obtained by
+modulo the problem dimension. A separate kernel assigns one thread to each
+particle for fitness evaluation and personal-best comparison. The CUDA
+version uses cuRAND states indexed by the linear coordinate index; each such
+thread draws its own cognitive and social random values at every iteration.
+Thus random values vary across particle-coordinate pairs and iterations.
+
+The program reports GPU elapsed time using CUDA events
+(\texttt{cudaEventRecord} and \texttt{cudaEventElapsedTime}). The event interval
+covers the iterative GPU work and the per-iteration transfers associated with
+the selected global-best method; initial allocations and host-side swarm
+initialization occur outside that event interval. The reported target
+environment is an NVIDIA T4 on Google Colab, with \texttt{nvcc} and CUDA 12.
+That environment is not available on the machine used to prepare this
+document, so the GPU results below are reported project measurements rather
+than measurements reproduced here. CUDA's programming model and guide are
+documented by NVIDIA~\cite{nvidiaCudaGuide}.
+
+\section{Differential Evolution}
+\label{sec:de}
+The project is intended to compare PSO with sequential and massively parallel
+DE. Neither DE implementation nor its measurements are part of the current
+code described here.
+
+\subsection{Sequential Differential Evolution}
+\label{sec:de-seq}
+\todo{Implement and document the sequential DE variant: mutation strategy,
+crossover, selection, parameter settings, pseudocode, and validation.}
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  participant/.style={draw,rounded corners,align=center,
+                      minimum width=2.0cm,minimum height=0.65cm},
+  flow/.style={-{Latex},thick},
+  every node/.style={font=\footnotesize}
+]
+\node[participant] (driver) {Sequential driver};
+\node[participant,right=0.4cm of driver] (de) {DE generation\\\todo{details}};
+\draw[dashed] (driver.south) -- ++(0,-1.8);
+\draw[dashed] (de.south) -- ++(0,-1.8);
+\draw[flow] ([yshift=-0.65cm]driver.south) --
+  node[above,sloped]{population and parameters} ([yshift=-0.65cm]de.south);
+\draw[flow] ([yshift=-1.3cm]de.south) --
+  node[above,sloped]{TODO: selected population}
+  ([yshift=-1.3cm]driver.south);
+\end{tikzpicture}
+\caption{Placeholder UML sequence diagram for the future sequential DE.}
+\label{fig:de-seq-placeholder}
+\end{figure}
+
+\subsection{Massively Parallel Differential Evolution}
+\label{sec:de-gpu}
+\todo{Implement and document the CUDA DE variant, its kernel mapping,
+memory transfers, random-number generation, and synchronization. Add its
+sequential and parallel UML diagrams after implementation.}
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  participant/.style={draw,rounded corners,align=center,
+                      minimum width=1.45cm,minimum height=0.65cm},
+  flow/.style={-{Latex},thick},
+  every node/.style={font=\scriptsize}
+]
+\node[participant] (host) {CPU / host};
+\node[participant,right=0.2cm of host] (device) {GPU / device};
+\node[participant,right=0.2cm of device] (kernel) {DE kernel\\\todo{mapping}};
+\draw[dashed] (host.south) -- ++(0,-1.8);
+\draw[dashed] (device.south) -- ++(0,-1.8);
+\draw[dashed] (kernel.south) -- ++(0,-1.8);
+\draw[flow] ([yshift=-0.65cm]host.south) --
+  node[above,sloped]{TODO: population} ([yshift=-0.65cm]device.south);
+\draw[flow] ([yshift=-1.1cm]device.south) --
+  node[above,sloped]{TODO: launch} ([yshift=-1.1cm]kernel.south);
+\draw[flow] ([yshift=-1.6cm]kernel.south) --
+  node[above,sloped]{TODO: results} ([yshift=-1.6cm]host.south);
+\end{tikzpicture}
+\caption{Placeholder UML sequence diagram for the future CUDA DE.}
+\label{fig:de-gpu-placeholder}
+\end{figure}
+
+\subsection{Implemented PSO Reference}
+\label{sec:pso}
+This subsection records the algorithm that is currently implemented and
+provides the reference against which the future DE variants will be compared.
+
+\subsubsection{Sequential PSO}
+\label{sec:pso-seq}
+Let $\mathbf{x}_i(t)\in\R^n$ and $\mathbf{v}_i(t)\in\R^n$ denote the position
+and velocity of particle $i$ at iteration $t$. Its personal best is
+$\mathbf{p}_i(t)$, and the best position over the swarm is $\mathbf{g}(t)$.
+For each coordinate $j$, the base PSO uses
+\begin{align}
+ v_{i,j}(t+1) &=
+ \omega v_{i,j}(t)
+ + c_1 r_{1,i,j,t}\bigl(p_{i,j}(t)-x_{i,j}(t)\bigr) \notag\\
+ &\quad + c_2 r_{2,i,j,t}\bigl(g_j(t)-x_{i,j}(t)\bigr), \\
+ x_{i,j}(t+1) &= x_{i,j}(t)+v_{i,j}(t+1).
+\end{align}
+Here $r_1,r_2\in[0,1]$ are independent pseudorandom draws. After the update,
+positions are clamped to the coordinate-wise benchmark domain. The personal
+best is replaced when the current fitness is lower; the global best is then
+updated from the personal bests. The shared parameters are
+$c_1=c_2=1.5$ and, for the base variant, $\omega=0.5$.
+
+\begin{algorithm}[t]
+\caption{Sequential PSO used as the reference}
+\label{alg:pso-seq}
+\begin{algorithmic}[1]
+\STATE Initialize each position in the selected domain; set velocities to zero.
+\STATE Set each personal best to its initial position and select the global best.
+\FOR{$t=0$ to $T-1$}
+  \FOR{each particle $i$ and coordinate $j$}
+    \STATE Draw independent $r_{1,i,j,t},r_{2,i,j,t}\in[0,1]$.
+    \STATE Update velocity and position using the PSO equations.
+    \STATE Clamp the position to the selected domain.
+  \ENDFOR
+  \FOR{each particle $i$}
+    \STATE Evaluate its fitness and update its stored personal-best fitness
+           and position if improved.
+  \ENDFOR
+  \STATE Set the global best to the best stored personal best.
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+The same evaluation budget is used by both variants:
+\begin{equation}
+  E_{\max}=10^4 n,\qquad
+  T=\left\lfloor\frac{10^4 n}{N}\right\rfloor,
+\end{equation}
+where $n$ is the dimension and $N$ is the population. The implementation uses
+integer division; when $10^4n$ is not divisible by $N$, the number of
+particle-fitness evaluations is therefore the largest complete-iteration
+budget not exceeding $E_{\max}$.
+
+\subsubsection{Massively Parallel CUDA PSO}
+\label{sec:pso-gpu}
+The original instructor design maps the position and velocity update onto
+one GPU thread per coordinate. In the corrected implementation, a second
+kernel maps one thread to each particle and evaluates its current fitness to
+update the stored personal best. The global-best step can be selected at
+runtime. In CPU mode, the personal-best positions are copied from device to
+host, scanned on the CPU, and the updated global-best vector is copied back to
+the device at each iteration. The CPU mode recomputes fitness while scanning
+the copied personal-best positions; the stored personal-best fitness array
+is used directly by the GPU reduction mode. In GPU mode, a reduction kernel
+selects the minimum personal-best fitness and writes the corresponding
+global-best position on the device.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  actor/.style={draw,rounded corners,align=center,minimum width=2.5cm,
+                minimum height=0.7cm},
+  note/.style={draw,align=center,text width=3.6cm,minimum height=0.65cm},
+  flow/.style={-{Latex},thick},
+  every node/.style={font=\footnotesize}
+]
+\node[actor] (cpu1) at (0,0) {CPU / host};
+\node[actor] (gpu1) at (8,0) {GPU / device};
+\node[above=0.15cm of cpu1] {\textbf{(a) CPU global-best mode}};
+\draw[dashed] (cpu1.south) -- ++(0,-4.9);
+\draw[dashed] (gpu1.south) -- ++(0,-4.9);
+\draw[flow] ([yshift=-0.5cm]cpu1.south) --
+  node[above,sloped]{initial swarm H2D} ([yshift=-0.5cm]gpu1.south);
+\node[note] (coord1) at (8,-1.35)
+  {Coordinate-update kernel\\one thread per coordinate};
+\node[note] (pbest1) at (8,-2.35)
+  {Personal-best kernel\\one thread per particle};
+\draw[flow] (coord1) -- (pbest1);
+\draw[flow] (pbest1.west) -- node[above]{pBest positions D2H} (0,-2.35);
+\node[note] (scan) at (0,-3.25)
+  {CPU scans pBest positions and evaluates fitness\\then updates gBest};
+\draw[flow] (scan.east) --
+  node[above,sloped]{gBest H2D} (6.2,-4.15);
+\node[below=0.2cm of scan,align=center,text width=4.0cm]
+  {Two host--device copies per iteration.};
+
+\node[actor] (cpu2) at (0,-6.5) {CPU / host};
+\node[actor] (gpu2) at (8,-6.5) {GPU / device};
+\node[above=0.15cm of cpu2] {\textbf{(b) GPU global-best mode}};
+\draw[dashed] (cpu2.south) -- ++(0,-4.2);
+\draw[dashed] (gpu2.south) -- ++(0,-4.2);
+\draw[flow] ([yshift=-0.5cm]cpu2.south) --
+  node[above,sloped]{initial swarm H2D} ([yshift=-0.5cm]gpu2.south);
+\node[note] (coord2) at (8,-7.85)
+  {Coordinate-update kernel\\one thread per coordinate};
+\node[note] (pbest2) at (8,-8.8)
+  {Personal-best kernel\\one thread per particle};
+\node[note] (reduce) at (8,-9.8)
+  {GPU reduction selects gBest\\from stored pBest fitness};
+\draw[flow] (coord2) -- (pbest2);
+\draw[flow] (pbest2) -- (reduce);
+\draw[flow] (reduce.west) -- node[above]{final result D2H} (0,-9.8);
+\end{tikzpicture}
+\caption{Host--device sequence for the two global-best modes. The corrected
+GPU mode removes the per-iteration personal-best transfers.}
+\label{fig:pso-sequence}
+\end{figure*}
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw,rounded corners,align=center,minimum width=3.3cm,
+              minimum height=0.75cm},
+  flow/.style={-{Latex},thick},
+  every node/.style={font=\footnotesize}
+]
+\node[box] (init) {Host initialization\\positions, velocities, pBest, gBest};
+\node[box,below=0.55cm of init] (transfer) {Host-to-device copy\\swarm arrays and stored fitness};
+\node[box,below=0.55cm of transfer] (coord) {Kernel 1: coordinate update\\1 thread per particle-coordinate\\cuRAND draws, velocity, position clamp};
+\node[box,below=0.55cm of coord] (pbest) {Kernel 2: personal best\\1 thread per particle\\fitness and pBest update};
+\node[box,below=0.55cm of pbest] (select) {Kernel 3 (GPU mode): global-best reduction\\or host scan and two copies (CPU mode)};
+\node[box,below=0.55cm of select] (result) {Final best solution and CSV row};
+\draw[flow] (init) -- (transfer);
+\draw[flow] (transfer) -- (coord);
+\draw[flow] (coord) -- (pbest);
+\draw[flow] (pbest) -- (select);
+\draw[flow] (select.west) -- ++(-1.0,0) |- (coord.west)
+  node[pos=0.25,left]{next iteration};
+\draw[flow] (select) -- (result);
+\end{tikzpicture}
+\caption{Kernel and data-flow architecture of the corrected CUDA PSO.}
+\label{fig:pso-kernels}
+\end{figure}
+
+\subsubsection{Corrections to the Instructor Code}
+\label{sec:corrections}
+Table~\ref{tab:corrections} summarizes the changes made to the supplied
+program. They are intended to repair correctness and configurability while
+preserving the PSO approach.
+
+\begin{table*}[t]
+\centering
+\caption{Corrections and extensions to the instructor-provided PSO}
+\label{tab:corrections}
+\begin{tabular}{p{0.31\textwidth}p{0.62\textwidth}}
+\toprule
+\textbf{Problem in the supplied code} & \textbf{Correction in the current project}\\
+\midrule
+Dimension, population, and selected function were compile-time constants.
+& Function, dimension, population, and number of runs are command-line inputs.\\
+The loop used $n\,10^4$ iterations rather than an evaluation budget.
+& Iterations are $\lfloor 10^4 n/N\rfloor$, corresponding to a maximum of
+$10^4 n$ particle evaluations.\\
+The objective selection included Levy and used incorrect/missing shift,
+domain, or bias handling; Griewank's product began at zero.
+& Four shifted objectives (Sphere, Rastrigin, Rosenbrock, Griewank) use their
+specified domains and biases in the shared \texttt{benchmarks.h}; Levy is
+removed and the Griewank product starts at one.\\
+Global \texttt{\_\_device\_\_} temporary particle arrays were shared by threads.
+& Per-particle temporary data is local to the fitness-evaluation thread; no
+shared global scratch array is used.\\
+$r_1$ and $r_2$ were drawn on the CPU once per iteration.
+& cuRAND state is initialized per linear coordinate index; each update thread
+draws fresh values for its particle-coordinate pair.\\
+Personal-best fitness was recomputed when comparing candidates.
+& One fitness value is stored per particle and updated together with its
+personal-best position.\\
+Block count was computed using floating-point ceiling on integer division.
+& Grid sizes use integer ceiling division, $(s+t-1)/t$.\\
+Position updates were not consistently restricted to the benchmark domain,
+and CUDA errors were not checked.
+& Updated positions are clamped to the domain, and kernel launches, device
+synchronization, allocations, copies, and events are checked.\\
+The global best was scanned on the CPU after two per-iteration transfers.
+& Both this CPU mode (\texttt{--gbest cpu}) and a device reduction mode
+(\texttt{--gbest gpu}) are available.\\
+No sequential executable with the same benchmark interface was supplied.
+& A sequential PSO uses the same objective header, parameter values,
+initialization scheme, update logic, and evaluation budget.\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsubsection{Improved PSO Variant}
+\label{sec:pso-improved}
+The base PSO uses $\omega=0.5$ and $c_1=c_2=1.5$, without a velocity bound.
+At dimension 100 and population 100, the base method was observed to diverge
+on Sphere in both the sequential and GPU implementations. The same behavior
+on both implementations indicates that this particular failure is not
+explained solely by GPU parallelization.
+
+The improved variant retains the cognitive and social coefficients, the
+initialization, the evaluation budget, and the position clamp. It changes
+inertia according to
+\begin{equation}
+  \omega(t)=\omega_{\max}
+  -(\omega_{\max}-\omega_{\min})\frac{t}{T-1},
+  \quad \omega_{\max}=0.9,\quad \omega_{\min}=0.4,
+\end{equation}
+and clamps each velocity component to
+\begin{equation}
+  v_{i,j}(t+1)\leftarrow
+  \min\!\left(v_{\max},\max(-v_{\max},v_{i,j}(t+1))\right),
+  \qquad
+  v_{\max}=\alpha(b_{\max}-b_{\min}).
+\end{equation}
+The current shared setting is $\alpha=0.1$. A trial value of $0.2$ did not
+converge reliably on Sphere at dimension 100 over three runs, so $0.1$ was
+retained. When $T=1$, the implementation uses the base inertia as a
+well-defined fallback because the linear schedule denominator would be zero.
+
+\section{Experimental Results}
+\label{sec:results}
+\subsection{Experimental Setup}
+\label{sec:setup}
+The reported GPU target is an NVIDIA T4 on Google Colab, compiled using
+\texttt{nvcc}, CUDA 12, and \texttt{-arch=sm\_75}. The project provides a
+sequential executable compiled with a C++17 compiler. The population sizes,
+dimensions, number of independent runs, and GPU global-best mode are supplied
+at runtime. Unless otherwise stated, each run receives a distinct seed.
+
+The measurements in this section are preliminary project results supplied
+for this article. The complete raw logs, exact Colab session metadata, and
+confidence intervals are not currently included in the repository.
+\todo{Archive raw CSV logs, record GPU/driver/compiler versions and seed
+policy, and repeat all configurations before treating the measurements as
+final.}
+
+\subsection{Benchmark Functions}
+\label{sec:benchmarks}
+The shared header defines four shifted objective functions. The coordinate
+indices below are one-based for mathematical readability. Let
+$\mathbf{o}\in\R^n$ be the deterministic shift vector and define the
+coordinate-wise shifted variables as indicated:
+\begin{align}
+ f_{\mathrm{Sphere}}(\mathbf{x})
+ &= \sum_{i=1}^{n}(x_i-o_i)^2 - 450,
+ && x_i\in[-100,100],\\
+ f_{\mathrm{Rastrigin}}(\mathbf{x})
+ &= \sum_{i=1}^{n}\left[z_i^2-10\cos(2\pi z_i)+10\right]-330,
+ && z_i=x_i-o_i,\quad x_i\in[-5,5],\\
+ f_{\mathrm{Rosenbrock}}(\mathbf{x})
+ &= \sum_{i=1}^{n-1}
+ \left[100(z_i^2-z_{i+1})^2+(z_i-1)^2\right]+390,
+ && z_i=x_i-o_i+1,\quad x_i\in[-100,100],\\
+ f_{\mathrm{Griewank}}(\mathbf{x})
+ &= \sum_{i=1}^{n}\frac{(x_i-o_i)^2}{4000}
+ -\prod_{i=1}^{n}\cos\!\left(\frac{x_i-o_i}{\sqrt{i}}\right)+1-180,
+ && x_i\in[-600,600].
+\end{align}
+The shift is reproducible and generated coordinate-wise by the code as
+\begin{equation}
+ q_i=((((i-1)\bmod 101)\cdot37+17)\bmod101),\qquad
+ o_i=\left(\frac{q_i}{100}-\frac{1}{2}\right)
+       0.2(b_{\max}-b_{\min}).
+\end{equation}
+This is the project's deterministic shift construction; it should not be
+mistaken for an externally supplied CEC shift vector. At $\mathbf{x}=\mathbf{o}$,
+the four benchmark expressions evaluate to their respective biases
+$-450,-330,390,-180$. The project reports that this consistency check passed
+on both CPU and GPU. The GPU check evaluates the shared header's objective
+on device for a ten-dimensional shift point. These are benchmark function
+families used in real-parameter optimization studies
+\cite{suganthan2005cec}; this project's particular shifts, domains, and
+biases are custom settings and do not by themselves establish compliance
+with the CEC 2005 benchmark definitions.
+
+\subsection{Preliminary Results}
+\label{sec:preliminary}
+Table~\ref{tab:seq-preliminary} gives the supplied mean best fitness from
+three sequential runs. The settings are population 50 at dimension 10 and
+population 100 at dimension 100. These values are preliminary and are not
+accompanied by standard deviations.
+
+\begin{table}[t]
+\centering
+\caption{Preliminary sequential mean minima over three runs}
+\label{tab:seq-preliminary}
+\begin{tabular}{clrr}
+\toprule
+\textbf{Dim.} & \textbf{Function} & \textbf{Base} & \textbf{Improved}\\
+\midrule
+10 & Sphere     & -450.000 & -450.000\\
+10 & Rastrigin  & -315.739 & -325.025\\
+10 & Rosenbrock & 7273.664 & 390.191\\
+10 & Griewank   & -179.923 & -179.912\\
+\midrule
+100 & Sphere     & 38437.802 & -449.995\\
+100 & Rastrigin  & 388.690 & -142.948\\
+100 & Rosenbrock & 8724032176.667 & 718.089\\
+100 & Griewank   & 193.794 & -179.999\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For Sphere at dimension 100, the improved sequential mean is within
+approximately $0.005$ of the bias, whereas the base mean is far from the
+optimum. The improved method also substantially lowers the reported
+Rosenbrock values, but its dimension-100 result remains above the bias.
+Rastrigin and Rosenbrock remain difficult at dimension 100 for this PSO
+configuration. The shift and bias do not change the underlying search
+difficulty; these observations motivate the planned DE comparison, rather
+than establishing that DE will perform better.
+
+The supplied three-run GPU measurements for the improved variant at
+dimension 100 and population 100 are summarized in
+Table~\ref{tab:gpu-preliminary}. The Rosenbrock values are reported
+individually because no mean or dispersion was supplied.
+\begin{table}[t]
+\centering
+\caption{Preliminary GPU improved-variant results, $n=100$, $N=100$}
+\label{tab:gpu-preliminary}
+\begin{tabular}{lc}
+\toprule
+\textbf{Function} & \textbf{Reported best fitness}\\
+\midrule
+Sphere & $-449.9999$ (error approximately $10^{-4}$)\\
+Rosenbrock & $452.7,\ 638.5,\ 623.2$\\
+Griewank & $-179.9999$\\
+\bottomrule
+\end{tabular}
+\end{table}
+\todo{Add the missing GPU Rastrigin results and raw run-level CSV values.}
+
+\subsection{Runtime and Planned Full Campaign}
+\label{sec:campaign}
+Table~\ref{tab:timings} records preliminary per-run timings supplied for the
+project. They are not a complete controlled benchmark campaign.
+\begin{table}[t]
+\centering
+\caption{Supplied preliminary base-PSO runtime measurements}
+\label{tab:timings}
+\begin{tabular}{lllr}
+\toprule
+\textbf{Dim.} & \textbf{Population / function} &
+\textbf{Configuration} & \textbf{Time}\\
+\midrule
+10 & 50 / Griewank & GPU, CPU gBest & $\sim0.08$ s\\
+10 & 50 / Griewank & GPU, GPU gBest & $\sim0.06$ s\\
+10 & 500 / Sphere & GPU, CPU gBest & $\sim0.011$ s\\
+10 & 500 / Sphere & GPU, GPU gBest & $\sim0.006$ s\\
+100 & 100 / Sphere & Sequential & $\sim3.5$ s\\
+100 & 100 / Sphere & GPU, CPU gBest & $\sim1.0$ s\\
+100 & 100 / Sphere & GPU, GPU gBest & $\sim0.34$ s\\
+50 & 100 / TODO: function & Sequential & $\sim0.89$ s\\
+50 & 100 / TODO: function & GPU & $\sim0.15$ s\\
+\bottomrule
+\end{tabular}
+\end{table}
+For the dimension-100 Sphere case, the reported sequential-to-GPU ratio is
+approximately $3.5/0.34\simeq10.3$. The GPU global-best reduction is faster
+in the supplied examples than the CPU scan mode; a plausible explanation is
+that it removes repeated host--device transfers of the personal-best array
+and global-best vector. This interpretation should be confirmed with
+controlled repetitions and profiling. The original instructor program,
+using Levy, dimension 3, 512 particles, and 30,000 iterations, reportedly
+took 10.4 s. This is a historical baseline with a different objective and
+workload and is not directly comparable to the corrected experiments.
+
+\begin{table*}[t]
+\centering
+\caption{Template for the complete PSO--DE campaign (results pending)}
+\label{tab:full-campaign}
+\begin{tabular}{p{1.4cm}p{1.2cm}p{1.5cm}p{1.5cm}p{0.8cm}p{3.5cm}p{4.0cm}}
+\toprule
+\textbf{Algorithm} & \textbf{Dim.} & \textbf{Population} &
+\textbf{Function} & \textbf{Runs} & \textbf{Fitness (mean $\pm$ SD)} &
+\textbf{Time; statistical tests}\\
+\midrule
+\todo{PSO / DE} & 10, 50, 100 & 50, 100, 500 &
+4 functions & 10 & \todo{mean $\pm$ standard deviation} &
+\todo{time and Wilcoxon / Kruskal--Wallis results}\\
+\bottomrule
+\end{tabular}
+\end{table*}
+\todo{Populate the campaign for every algorithm, variant, dimension,
+population, and benchmark; report the statistical test design, corrections
+for multiple comparisons, and effect sizes.}
+
+\subsection{Comparison with the Literature}
+\label{sec:literature}
+\todo{Compare the completed CUDA DE implementation and measured workload with
+\emph{An Improved CUDA-Based Implementation of Differential Evolution}.
+Verify the bibliographic record and ensure that hardware, objective
+definitions, evaluation budgets, and timing boundaries are comparable before
+making quantitative claims.}
+
+\section{Conclusion}
+\label{sec:conclusion}
+This paper documents a corrected sequential and CUDA PSO implementation,
+four shared shifted objectives, selectable CPU/GPU global-best handling, and
+a bounded-velocity variant. Preliminary results indicate that the improved
+variant addresses the observed Sphere divergence at dimension 100, while
+Rastrigin and Rosenbrock remain difficult at that dimension. Preliminary
+timings suggest a benefit from computing the global best on the GPU, but a
+complete campaign is still required. The next steps are to implement both
+DE variants, collect reproducible ten-run results across all specified
+configurations, and perform the planned statistical and literature
+comparisons.
+\todo{Replace this provisional conclusion after the complete PSO--DE
+experiments and statistical analysis.}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
