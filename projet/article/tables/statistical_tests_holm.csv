@@ -1,0 +1,333 @@
+comparaison,version,fonction,dim,pop,runs_a,runs_b,statistique,p_value,conclusion,famille,p_holm,significatif_holm
+DE best1: seq vs GPU,seq vs gpu,1,10,50,10,10,Mann-Whitney U,0.7913367801006604,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,1,10,100,10,10,Mann-Whitney U,0.864569301686742,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,1,10,500,10,10,Mann-Whitney U,,=,DE séquentiel vs GPU,,
+DE best1: seq vs GPU,seq vs gpu,1,50,50,10,10,Mann-Whitney U,0.10410988966022681,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,1,50,100,10,10,Mann-Whitney U,0.7913367801006604,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,1,50,500,10,10,Mann-Whitney U,0.7337299956962472,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,1,100,50,10,10,Mann-Whitney U,0.21229383619233155,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,1,100,100,10,10,Mann-Whitney U,0.9698499769931556,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,1,100,500,10,10,Mann-Whitney U,0.7337299956962472,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,2,10,50,10,10,Mann-Whitney U,0.5707503880581739,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,2,10,100,10,10,Mann-Whitney U,0.3634426870035137,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,2,10,500,10,10,Mann-Whitney U,1.0,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,2,50,50,10,10,Mann-Whitney U,0.16197241048012612,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,2,50,100,10,10,Mann-Whitney U,0.9097218891455553,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,2,50,500,10,10,Mann-Whitney U,0.3074894566186813,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,2,100,50,10,10,Mann-Whitney U,0.5707503880581739,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,2,100,100,10,10,Mann-Whitney U,1.0,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,2,100,500,10,10,Mann-Whitney U,0.3447042220069576,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,3,10,50,10,10,Mann-Whitney U,0.9698499769931556,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,3,10,100,10,10,Mann-Whitney U,0.21229383619233155,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,3,10,500,10,10,Mann-Whitney U,0.10410988966022681,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,3,50,50,10,10,Mann-Whitney U,0.21229383619233155,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,3,50,100,10,10,Mann-Whitney U,0.03763531378731424,p<0.05,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,3,50,500,10,10,Mann-Whitney U,0.0010079762403767444,p<0.05,DE séquentiel vs GPU,0.10079762403767444,False
+DE best1: seq vs GPU,seq vs gpu,3,100,50,10,10,Mann-Whitney U,0.3447042220069576,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,3,100,100,10,10,Mann-Whitney U,0.4273553138978077,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,3,100,500,10,10,Mann-Whitney U,0.9698499769931556,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,4,10,50,10,10,Mann-Whitney U,0.7337299956962472,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,4,10,100,10,10,Mann-Whitney U,0.08897301170181328,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,4,10,500,10,10,Mann-Whitney U,0.1403158334701604,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,4,50,50,10,10,Mann-Whitney U,0.7337299956962472,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,4,50,100,10,10,Mann-Whitney U,0.4273553138978077,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,4,50,500,10,10,Mann-Whitney U,0.053902557169387175,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,4,100,50,10,10,Mann-Whitney U,0.9698499769931556,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,4,100,100,10,10,Mann-Whitney U,0.3846730627355087,n.s.,DE séquentiel vs GPU,1.0,False
+DE best1: seq vs GPU,seq vs gpu,4,100,500,10,10,Mann-Whitney U,0.9097218891455553,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,1,10,50,10,10,Mann-Whitney U,0.36271726273854765,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,1,10,100,10,10,Mann-Whitney U,,=,DE séquentiel vs GPU,,
+DE currenttobest1: seq vs GPU,seq vs gpu,1,10,500,10,10,Mann-Whitney U,,=,DE séquentiel vs GPU,,
+DE currenttobest1: seq vs GPU,seq vs gpu,1,50,50,10,10,Mann-Whitney U,0.04515456962427901,p<0.05,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,1,50,100,10,10,Mann-Whitney U,0.47267559351158717,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,1,50,500,10,10,Mann-Whitney U,0.7337299956962472,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,1,100,50,10,10,Mann-Whitney U,0.5707503880581739,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,1,100,100,10,10,Mann-Whitney U,0.47267559351158717,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,1,100,500,10,10,Mann-Whitney U,0.27303633975118835,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,2,10,50,10,10,Mann-Whitney U,0.36125923509152436,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,2,10,100,10,10,Mann-Whitney U,0.5186303998216906,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,2,10,500,10,10,Mann-Whitney U,0.8501067391385259,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,2,50,50,10,10,Mann-Whitney U,0.3447042220069576,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,2,50,100,10,10,Mann-Whitney U,0.9698499769931556,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,2,50,500,10,10,Mann-Whitney U,0.14046504815835495,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,2,100,50,10,10,Mann-Whitney U,0.16197241048012612,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,2,100,100,10,10,Mann-Whitney U,0.6231762238821174,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,2,100,500,10,10,Mann-Whitney U,0.47267559351158717,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,3,10,50,10,10,Mann-Whitney U,0.6775849579524755,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,3,10,100,10,10,Mann-Whitney U,0.21229383619233155,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,3,10,500,10,10,Mann-Whitney U,0.8501067391385259,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,3,50,50,10,10,Mann-Whitney U,0.47267559351158717,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,3,50,100,10,10,Mann-Whitney U,0.0211339281291611,p<0.05,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,3,50,500,10,10,Mann-Whitney U,0.12122450301291662,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,3,100,50,10,10,Mann-Whitney U,0.6775849579524755,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,3,100,100,10,10,Mann-Whitney U,0.07566157214388704,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,3,100,500,10,10,Mann-Whitney U,0.06402210128302689,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,4,10,50,10,10,Mann-Whitney U,0.7337299956962472,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,4,10,100,10,10,Mann-Whitney U,0.18587673236587576,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,4,10,500,10,10,Mann-Whitney U,0.5205228832757727,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,4,50,50,10,10,Mann-Whitney U,0.9698499769931556,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,4,50,100,10,10,Mann-Whitney U,0.03763531378731424,p<0.05,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,4,50,500,10,10,Mann-Whitney U,0.04515456962427901,p<0.05,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,4,100,50,10,10,Mann-Whitney U,0.3074894566186813,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,4,100,100,10,10,Mann-Whitney U,0.6231762238821174,n.s.,DE séquentiel vs GPU,1.0,False
+DE currenttobest1: seq vs GPU,seq vs gpu,4,100,500,10,10,Mann-Whitney U,0.5707503880581739,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,1,10,50,10,10,Mann-Whitney U,,=,DE séquentiel vs GPU,,
+DE rand1: seq vs GPU,seq vs gpu,1,10,100,10,10,Mann-Whitney U,,=,DE séquentiel vs GPU,,
+DE rand1: seq vs GPU,seq vs gpu,1,10,500,10,10,Mann-Whitney U,0.5340679771540827,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,1,50,50,10,10,Mann-Whitney U,,=,DE séquentiel vs GPU,,
+DE rand1: seq vs GPU,seq vs gpu,1,50,100,10,10,Mann-Whitney U,,=,DE séquentiel vs GPU,,
+DE rand1: seq vs GPU,seq vs gpu,1,50,500,10,10,Mann-Whitney U,0.9097218891455553,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,1,100,50,10,10,Mann-Whitney U,0.031823502304941804,p<0.05,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,1,100,100,10,10,Mann-Whitney U,0.3661914983681961,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,1,100,500,10,10,Mann-Whitney U,0.7913367801006604,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,2,10,50,10,10,Mann-Whitney U,1.0,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,2,10,100,10,10,Mann-Whitney U,0.8501067391385259,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,2,10,500,10,10,Mann-Whitney U,0.3447042220069576,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,2,50,50,10,10,Mann-Whitney U,0.5955927900169042,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,2,50,100,10,10,Mann-Whitney U,0.04515456962427901,p<0.05,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,2,50,500,10,10,Mann-Whitney U,0.3074894566186813,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,2,100,50,10,10,Mann-Whitney U,1.0,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,2,100,100,10,10,Mann-Whitney U,0.07566157214388704,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,2,100,500,10,10,Mann-Whitney U,0.14046504815835495,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,3,10,50,10,10,Mann-Whitney U,0.24132159301718004,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,3,10,100,10,10,Mann-Whitney U,1.0,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,3,10,500,10,10,Mann-Whitney U,0.9698499769931556,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,3,50,50,10,10,Mann-Whitney U,0.5707503880581739,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,3,50,100,10,10,Mann-Whitney U,0.3074894566186813,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,3,50,500,10,10,Mann-Whitney U,0.7337299956962472,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,3,100,50,10,10,Mann-Whitney U,0.9097218891455553,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,3,100,100,10,10,Mann-Whitney U,0.6231762238821174,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,3,100,500,10,10,Mann-Whitney U,0.24132159301718004,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,4,10,50,10,10,Mann-Whitney U,0.819727720369768,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,4,10,100,10,10,Mann-Whitney U,0.7337299956962472,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,4,10,500,10,10,Mann-Whitney U,0.7337299956962472,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,4,50,50,10,10,Mann-Whitney U,0.7769472416093043,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,4,50,100,10,10,Mann-Whitney U,,=,DE séquentiel vs GPU,,
+DE rand1: seq vs GPU,seq vs gpu,4,50,500,10,10,Mann-Whitney U,1.0,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,4,100,50,10,10,Mann-Whitney U,0.039110518818390595,p<0.05,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,4,100,100,10,10,Mann-Whitney U,0.062048559178315685,n.s.,DE séquentiel vs GPU,1.0,False
+DE rand1: seq vs GPU,seq vs gpu,4,100,500,10,10,Mann-Whitney U,0.21229383619233155,n.s.,DE séquentiel vs GPU,1.0,False
+Kruskal-Wallis: 3 strategies DE,gpu,1,10,50,30,0,Kruskal-Wallis,6.997285260259078e-06,p<0.05,Kruskal-Wallis DE (GPU),0.00010495927890388617,True
+Kruskal-Wallis: 3 strategies DE,seq,1,10,50,30,0,Kruskal-Wallis,1.2498818653333021e-05,p<0.05,Kruskal-Wallis DE (séquentiel),0.00014998582383999627,True
+Kruskal-Wallis: 3 strategies DE,gpu,1,10,100,30,0,Kruskal-Wallis,0.0030275547453757976,p<0.05,Kruskal-Wallis DE (GPU),0.006055109490751595,True
+Kruskal-Wallis: 3 strategies DE,seq,1,10,100,30,0,Kruskal-Wallis,0.003122158250879304,p<0.05,Kruskal-Wallis DE (séquentiel),0.006244316501758608,True
+Kruskal-Wallis: 3 strategies DE,gpu,1,10,500,30,0,Kruskal-Wallis,9.798387079071304e-07,p<0.05,Kruskal-Wallis DE (GPU),3.52741934846567e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,1,10,500,30,0,Kruskal-Wallis,1.055529638592009e-06,p<0.05,Kruskal-Wallis DE (séquentiel),3.7999066989312324e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,1,50,50,30,0,Kruskal-Wallis,1.5228618937077617e-06,p<0.05,Kruskal-Wallis DE (GPU),5.330016627977166e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,1,50,50,30,0,Kruskal-Wallis,1.5228618937077617e-06,p<0.05,Kruskal-Wallis DE (séquentiel),5.330016627977166e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,1,50,100,30,0,Kruskal-Wallis,1.5228618937077617e-06,p<0.05,Kruskal-Wallis DE (GPU),5.330016627977166e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,1,50,100,30,0,Kruskal-Wallis,1.5228618937077617e-06,p<0.05,Kruskal-Wallis DE (séquentiel),5.330016627977166e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,1,50,500,30,0,Kruskal-Wallis,7.163931661945458e-06,p<0.05,Kruskal-Wallis DE (GPU),0.00010495927890388617,True
+Kruskal-Wallis: 3 strategies DE,seq,1,50,500,30,0,Kruskal-Wallis,3.6246894746808094e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.774289120887147e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,1,100,50,30,0,Kruskal-Wallis,2.3802139475719386e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,1,100,50,30,0,Kruskal-Wallis,1.9417373631416905e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.21355956205341e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,1,100,100,30,0,Kruskal-Wallis,2.1854083365328303e-06,p<0.05,Kruskal-Wallis DE (GPU),6.993306676905057e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,1,100,100,30,0,Kruskal-Wallis,1.9417373631416905e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.21355956205341e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,1,100,500,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,1,100,500,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.774289120887147e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,2,10,50,30,0,Kruskal-Wallis,3.546323896667327e-05,p<0.05,Kruskal-Wallis DE (GPU),0.00028370591173338614,True
+Kruskal-Wallis: 3 strategies DE,seq,2,10,50,30,0,Kruskal-Wallis,2.1420791801609046e-05,p<0.05,Kruskal-Wallis DE (séquentiel),0.00021420791801609045,True
+Kruskal-Wallis: 3 strategies DE,gpu,2,10,100,30,0,Kruskal-Wallis,1.0660501910963072e-05,p<0.05,Kruskal-Wallis DE (GPU),0.00013858652484251995,True
+Kruskal-Wallis: 3 strategies DE,seq,2,10,100,30,0,Kruskal-Wallis,3.9164457051887575e-05,p<0.05,Kruskal-Wallis DE (séquentiel),0.00035248011346698815,True
+Kruskal-Wallis: 3 strategies DE,gpu,2,10,500,30,0,Kruskal-Wallis,3.953320426669519e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,2,10,500,30,0,Kruskal-Wallis,2.7813904592378917e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.774289120887147e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,2,50,50,30,0,Kruskal-Wallis,2.482866004030669e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,2,50,50,30,0,Kruskal-Wallis,2.482866004030669e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.774289120887147e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,2,50,100,30,0,Kruskal-Wallis,3.7410902433887894e-05,p<0.05,Kruskal-Wallis DE (GPU),0.00028370591173338614,True
+Kruskal-Wallis: 3 strategies DE,seq,2,50,100,30,0,Kruskal-Wallis,0.00030139261506058297,p<0.05,Kruskal-Wallis DE (séquentiel),0.0012055704602423319,True
+Kruskal-Wallis: 3 strategies DE,gpu,2,50,500,30,0,Kruskal-Wallis,1.962493360631265e-05,p<0.05,Kruskal-Wallis DE (GPU),0.00023549920327575182,True
+Kruskal-Wallis: 3 strategies DE,seq,2,50,500,30,0,Kruskal-Wallis,7.953205652273775e-06,p<0.05,Kruskal-Wallis DE (séquentiel),0.00011929808478410662,True
+Kruskal-Wallis: 3 strategies DE,gpu,2,100,50,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,2,100,50,30,0,Kruskal-Wallis,2.4757442300763816e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.774289120887147e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,2,100,100,30,0,Kruskal-Wallis,2.829292518663684e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,2,100,100,30,0,Kruskal-Wallis,8.806680295330267e-06,p<0.05,Kruskal-Wallis DE (séquentiel),0.00011929808478410662,True
+Kruskal-Wallis: 3 strategies DE,gpu,2,100,500,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,2,100,500,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.774289120887147e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,3,10,50,30,0,Kruskal-Wallis,2.3908169853115502e-05,p<0.05,Kruskal-Wallis DE (GPU),0.00023908169853115502,True
+Kruskal-Wallis: 3 strategies DE,seq,3,10,50,30,0,Kruskal-Wallis,0.00012340980408667962,p<0.05,Kruskal-Wallis DE (séquentiel),0.0006170490204333981,True
+Kruskal-Wallis: 3 strategies DE,gpu,3,10,100,30,0,Kruskal-Wallis,4.74996330874348e-05,p<0.05,Kruskal-Wallis DE (GPU),0.00028370591173338614,True
+Kruskal-Wallis: 3 strategies DE,seq,3,10,100,30,0,Kruskal-Wallis,4.5829486812299766e-05,p<0.05,Kruskal-Wallis DE (séquentiel),0.0003666358944983981,True
+Kruskal-Wallis: 3 strategies DE,gpu,3,10,500,30,0,Kruskal-Wallis,0.0011682386818941547,p<0.05,Kruskal-Wallis DE (GPU),0.003504716045682464,True
+Kruskal-Wallis: 3 strategies DE,seq,3,10,500,30,0,Kruskal-Wallis,0.06065333574655715,n.s.,Kruskal-Wallis DE (séquentiel),0.06065333574655715,False
+Kruskal-Wallis: 3 strategies DE,gpu,3,50,50,30,0,Kruskal-Wallis,3.206525580636635e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,3,50,50,30,0,Kruskal-Wallis,7.163931661945458e-06,p<0.05,Kruskal-Wallis DE (séquentiel),0.00011462290659112733,True
+Kruskal-Wallis: 3 strategies DE,gpu,3,50,100,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,3,50,100,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.774289120887147e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,3,50,500,30,0,Kruskal-Wallis,2.1177301260247797e-05,p<0.05,Kruskal-Wallis DE (GPU),0.00023549920327575182,True
+Kruskal-Wallis: 3 strategies DE,seq,3,50,500,30,0,Kruskal-Wallis,4.867609160075165e-05,p<0.05,Kruskal-Wallis DE (séquentiel),0.0003666358944983981,True
+Kruskal-Wallis: 3 strategies DE,gpu,3,100,50,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,3,100,50,30,0,Kruskal-Wallis,3.6246894746808094e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.774289120887147e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,3,100,100,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,3,100,100,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.774289120887147e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,3,100,500,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,3,100,500,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.774289120887147e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,4,10,50,30,0,Kruskal-Wallis,2.42448793793044e-05,p<0.05,Kruskal-Wallis DE (GPU),0.00023908169853115502,True
+Kruskal-Wallis: 3 strategies DE,seq,4,10,50,30,0,Kruskal-Wallis,1.5190745992636383e-05,p<0.05,Kruskal-Wallis DE (séquentiel),0.0001670982059190002,True
+Kruskal-Wallis: 3 strategies DE,gpu,4,10,100,30,0,Kruskal-Wallis,0.004016198964612526,p<0.05,Kruskal-Wallis DE (GPU),0.006055109490751595,True
+Kruskal-Wallis: 3 strategies DE,seq,4,10,100,30,0,Kruskal-Wallis,0.0007099453372758119,p<0.05,Kruskal-Wallis DE (séquentiel),0.0021298360118274357,True
+Kruskal-Wallis: 3 strategies DE,gpu,4,10,500,30,0,Kruskal-Wallis,4.943823813674844e-05,p<0.05,Kruskal-Wallis DE (GPU),0.00028370591173338614,True
+Kruskal-Wallis: 3 strategies DE,seq,4,10,500,30,0,Kruskal-Wallis,6.254822093857138e-05,p<0.05,Kruskal-Wallis DE (séquentiel),0.0003752893256314283,True
+Kruskal-Wallis: 3 strategies DE,gpu,4,50,50,30,0,Kruskal-Wallis,4.989998494968559e-06,p<0.05,Kruskal-Wallis DE (GPU),7.983997591949694e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,4,50,50,30,0,Kruskal-Wallis,2.250216093210503e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.525626670310459e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,4,50,100,30,0,Kruskal-Wallis,1.5228618937077617e-06,p<0.05,Kruskal-Wallis DE (GPU),5.330016627977166e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,4,50,100,30,0,Kruskal-Wallis,1.5228618937077617e-06,p<0.05,Kruskal-Wallis DE (séquentiel),5.330016627977166e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,4,50,500,30,0,Kruskal-Wallis,4.5049803511521976e-05,p<0.05,Kruskal-Wallis DE (GPU),0.00028370591173338614,True
+Kruskal-Wallis: 3 strategies DE,seq,4,50,500,30,0,Kruskal-Wallis,7.953205652273775e-06,p<0.05,Kruskal-Wallis DE (séquentiel),0.00011929808478410662,True
+Kruskal-Wallis: 3 strategies DE,gpu,4,100,50,30,0,Kruskal-Wallis,2.559394347901524e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,4,100,50,30,0,Kruskal-Wallis,2.4193889717454097e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.774289120887147e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,4,100,100,30,0,Kruskal-Wallis,2.3504732790417582e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,4,100,100,30,0,Kruskal-Wallis,1.9417373631416905e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.21355956205341e-05,True
+Kruskal-Wallis: 3 strategies DE,gpu,4,100,500,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (GPU),7.28646716502945e-05,True
+Kruskal-Wallis: 3 strategies DE,seq,4,100,500,30,0,Kruskal-Wallis,2.49000508218493e-06,p<0.05,Kruskal-Wallis DE (séquentiel),6.774289120887147e-05,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,1,10,50,10,10,Mann-Whitney U,,=,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",,
+PSO ameliore vs DE rand1,seq,1,10,50,10,10,Mann-Whitney U,,=,PSO amélioré vs DE rand/1 (séquentiel),,
+PSO ameliore vs DE rand1,gpu-gbest-gpu,1,10,100,10,10,Mann-Whitney U,,=,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",,
+PSO ameliore vs DE rand1,seq,1,10,100,10,10,Mann-Whitney U,,=,PSO amélioré vs DE rand/1 (séquentiel),,
+PSO ameliore vs DE rand1,gpu-gbest-gpu,1,10,500,10,10,Mann-Whitney U,5.469864163379713e-05,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.0017503565322815082,True
+PSO ameliore vs DE rand1,seq,1,10,500,10,10,Mann-Whitney U,6.203353636013878e-05,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0019230396271643021,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,1,50,50,10,10,Mann-Whitney U,4.550596815131822e-05,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.0015472029171448194,True
+PSO ameliore vs DE rand1,seq,1,50,50,10,10,Mann-Whitney U,4.040224543100724e-05,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0013736763446542462,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,1,50,100,10,10,Mann-Whitney U,4.7314072604093833e-05,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.0015613643959350965,True
+PSO ameliore vs DE rand1,seq,1,50,100,10,10,Mann-Whitney U,4.040224543100724e-05,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0013736763446542462,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,1,50,500,10,10,Mann-Whitney U,0.00015384634260572105,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004153851250354468,True
+PSO ameliore vs DE rand1,seq,1,50,500,10,10,Mann-Whitney U,0.00014503596230726318,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0037709350199888426,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,1,100,50,10,10,Mann-Whitney U,0.00012465879145552401,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.003634959315101233,True
+PSO ameliore vs DE rand1,seq,1,100,50,10,10,Mann-Whitney U,0.00010857519910892474,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0031486807741588174,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,1,100,100,10,10,Mann-Whitney U,0.00012465879145552401,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.003634959315101233,True
+PSO ameliore vs DE rand1,seq,1,100,100,10,10,Mann-Whitney U,0.00010927036519221175,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0031486807741588174,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,1,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,1,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,2,10,50,10,10,Mann-Whitney U,0.005327870107254369,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.04262296085803495,True
+PSO ameliore vs DE rand1,seq,2,10,50,10,10,Mann-Whitney U,0.007889541738477824,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.07100587564630041,False
+PSO ameliore vs DE rand1,gpu-gbest-gpu,2,10,100,10,10,Mann-Whitney U,0.00017661101166893502,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,2,10,100,10,10,Mann-Whitney U,0.00017070029451986127,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,2,10,500,10,10,Mann-Whitney U,0.00017070029451986127,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,2,10,500,10,10,Mann-Whitney U,0.00018165114609146497,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,2,50,50,10,10,Mann-Whitney U,0.0001806347208075351,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,2,50,50,10,10,Mann-Whitney U,0.00018165114609146497,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,2,50,100,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,2,50,100,10,10,Mann-Whitney U,0.00579535854433471,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0579535854433471,False
+PSO ameliore vs DE rand1,gpu-gbest-gpu,2,50,500,10,10,Mann-Whitney U,0.0001806347208075351,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,2,50,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,2,100,50,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,2,100,50,10,10,Mann-Whitney U,0.0001806347208075351,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,2,100,100,10,10,Mann-Whitney U,0.0022022199424970783,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.022022199424970784,True
+PSO ameliore vs DE rand1,seq,2,100,100,10,10,Mann-Whitney U,0.03763531378731424,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.1881765689365712,False
+PSO ameliore vs DE rand1,gpu-gbest-gpu,2,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,2,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,3,10,50,10,10,Mann-Whitney U,0.06402210128302689,n.s.,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.25608840513210757,False
+PSO ameliore vs DE rand1,seq,3,10,50,10,10,Mann-Whitney U,0.017257456083119765,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.12080219258183836,False
+PSO ameliore vs DE rand1,gpu-gbest-gpu,3,10,100,10,10,Mann-Whitney U,0.00012116531050337443,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.003634959315101233,True
+PSO ameliore vs DE rand1,seq,3,10,100,10,10,Mann-Whitney U,8.744986536701464e-05,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.002623495961010439,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,3,10,500,10,10,Mann-Whitney U,0.00043963875262656454,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.005275665031518774,True
+PSO ameliore vs DE rand1,seq,3,10,500,10,10,Mann-Whitney U,0.0028272720911168077,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.031099993002284883,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,3,50,50,10,10,Mann-Whitney U,0.08897301170181328,n.s.,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.26691903510543985,False
+PSO ameliore vs DE rand1,seq,3,50,50,10,10,Mann-Whitney U,0.7337299956962472,n.s.,PSO amélioré vs DE rand/1 (séquentiel),0.9453511870231743,False
+PSO ameliore vs DE rand1,gpu-gbest-gpu,3,50,100,10,10,Mann-Whitney U,0.014019277113959953,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.09290104289837126,False
+PSO ameliore vs DE rand1,seq,3,50,100,10,10,Mann-Whitney U,0.025748080821108063,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.15448848492664838,False
+PSO ameliore vs DE rand1,gpu-gbest-gpu,3,50,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,3,50,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,3,100,50,10,10,Mann-Whitney U,0.5707503880581739,n.s.,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",1.0,False
+PSO ameliore vs DE rand1,seq,3,100,50,10,10,Mann-Whitney U,0.47267559351158717,n.s.,PSO amélioré vs DE rand/1 (séquentiel),0.9453511870231743,False
+PSO ameliore vs DE rand1,gpu-gbest-gpu,3,100,100,10,10,Mann-Whitney U,0.00024612812790522973,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,3,100,100,10,10,Mann-Whitney U,0.009108496398030965,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.07286797118424772,False
+PSO ameliore vs DE rand1,gpu-gbest-gpu,3,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,3,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,4,10,50,10,10,Mann-Whitney U,0.0007510688919945186,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.008261757811939704,True
+PSO ameliore vs DE rand1,seq,4,10,50,10,10,Mann-Whitney U,0.0001806347208075351,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,4,10,100,10,10,Mann-Whitney U,0.0028272720911168077,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.02544544882005127,True
+PSO ameliore vs DE rand1,seq,4,10,100,10,10,Mann-Whitney U,0.0013149446697132139,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.015779336036558567,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,4,10,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,4,10,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,4,50,50,10,10,Mann-Whitney U,0.9086206565390462,n.s.,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",1.0,False
+PSO ameliore vs DE rand1,seq,4,50,50,10,10,Mann-Whitney U,0.22476463855574036,n.s.,PSO amélioré vs DE rand/1 (séquentiel),0.8990585542229614,False
+PSO ameliore vs DE rand1,gpu-gbest-gpu,4,50,100,10,10,Mann-Whitney U,6.113336892015162e-05,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.0018951344365247,True
+PSO ameliore vs DE rand1,seq,4,50,100,10,10,Mann-Whitney U,5.469864163379713e-05,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0017503565322815082,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,4,50,500,10,10,Mann-Whitney U,0.00017761066068896375,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,4,50,500,10,10,Mann-Whitney U,0.00017561553104590864,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,4,100,50,10,10,Mann-Whitney U,0.035072258022391965,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.17536129011195983,False
+PSO ameliore vs DE rand1,seq,4,100,50,10,10,Mann-Whitney U,0.2710455255018993,n.s.,PSO amélioré vs DE rand/1 (séquentiel),0.8990585542229614,False
+PSO ameliore vs DE rand1,gpu-gbest-gpu,4,100,100,10,10,Mann-Whitney U,0.013271577556910179,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.09290104289837126,False
+PSO ameliore vs DE rand1,seq,4,100,100,10,10,Mann-Whitney U,0.00010927036519221175,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0031486807741588174,True
+PSO ameliore vs DE rand1,gpu-gbest-gpu,4,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO amélioré vs DE rand/1 (GPU, gBest GPU)",0.004438207657516393,True
+PSO ameliore vs DE rand1,seq,4,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO amélioré vs DE rand/1 (séquentiel),0.0042675073629965315,True
+PSO base vs ameliore,gpu-gbest-gpu,1,10,50,10,10,Mann-Whitney U,,=,"PSO base vs amélioré (GPU, gBest GPU)",,
+PSO base vs ameliore,seq,1,10,50,10,10,Mann-Whitney U,0.36812025069351895,n.s.,PSO base vs amélioré (séquentiel),1.0,False
+PSO base vs ameliore,gpu-gbest-gpu,1,10,100,10,10,Mann-Whitney U,,=,"PSO base vs amélioré (GPU, gBest GPU)",,
+PSO base vs ameliore,seq,1,10,100,10,10,Mann-Whitney U,,=,PSO base vs amélioré (séquentiel),,
+PSO base vs ameliore,gpu-gbest-gpu,1,10,500,10,10,Mann-Whitney U,,=,"PSO base vs amélioré (GPU, gBest GPU)",,
+PSO base vs ameliore,seq,1,10,500,10,10,Mann-Whitney U,,=,PSO base vs amélioré (séquentiel),,
+PSO base vs ameliore,gpu-gbest-gpu,1,50,50,10,10,Mann-Whitney U,0.00014077465089962942,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.0046455634796877705,True
+PSO base vs ameliore,seq,1,50,50,10,10,Mann-Whitney U,0.00012855089812896465,p<0.05,PSO base vs amélioré (séquentiel),0.004370730536384798,True
+PSO base vs ameliore,gpu-gbest-gpu,1,50,100,10,10,Mann-Whitney U,0.00014503596230726318,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.0046455634796877705,True
+PSO base vs ameliore,seq,1,50,100,10,10,Mann-Whitney U,0.00012855089812896465,p<0.05,PSO base vs amélioré (séquentiel),0.004370730536384798,True
+PSO base vs ameliore,gpu-gbest-gpu,1,50,500,10,10,Mann-Whitney U,0.00015384634260572105,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.004769236620777353,True
+PSO base vs ameliore,seq,1,50,500,10,10,Mann-Whitney U,0.00014503596230726318,p<0.05,PSO base vs amélioré (séquentiel),0.0044961148315251585,True
+PSO base vs ameliore,gpu-gbest-gpu,1,100,50,10,10,Mann-Whitney U,0.00017761066068896375,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,1,100,50,10,10,Mann-Whitney U,0.0001806347208075351,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-cpu,1,100,100,10,10,Mann-Whitney U,0.00017761066068896375,p<0.05,"PSO base vs amélioré (GPU, gBest CPU)",0.00142088528551171,True
+PSO base vs ameliore,gpu-gbest-gpu,1,100,100,10,10,Mann-Whitney U,0.00016304893553653748,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.004891468066096125,True
+PSO base vs ameliore,seq,1,100,100,10,10,Mann-Whitney U,0.00018165114609146497,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-cpu,1,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest CPU)",0.00142088528551171,True
+PSO base vs ameliore,gpu-gbest-gpu,1,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,1,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-gpu,2,10,50,10,10,Mann-Whitney U,0.001298425630078433,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.010387405040627464,True
+PSO base vs ameliore,seq,2,10,50,10,10,Mann-Whitney U,0.002459557776257098,p<0.05,PSO base vs amélioré (séquentiel),0.02213601998631388,True
+PSO base vs ameliore,gpu-gbest-gpu,2,10,100,10,10,Mann-Whitney U,0.06182675868692394,n.s.,"PSO base vs amélioré (GPU, gBest GPU)",0.30913379343461966,False
+PSO base vs ameliore,seq,2,10,100,10,10,Mann-Whitney U,0.010543261855975383,p<0.05,PSO base vs amélioré (séquentiel),0.07380283299182767,False
+PSO base vs ameliore,gpu-gbest-gpu,2,10,500,10,10,Mann-Whitney U,0.02625095520064032,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.15750573120384193,False
+PSO base vs ameliore,seq,2,10,500,10,10,Mann-Whitney U,0.4951545345257743,n.s.,PSO base vs amélioré (séquentiel),1.0,False
+PSO base vs ameliore,gpu-gbest-gpu,2,50,50,10,10,Mann-Whitney U,0.00018165114609146497,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,2,50,50,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-gpu,2,50,100,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,2,50,100,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-gpu,2,50,500,10,10,Mann-Whitney U,0.0001806347208075351,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,2,50,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-gpu,2,100,50,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,2,100,50,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-cpu,2,100,100,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest CPU)",0.00142088528551171,True
+PSO base vs ameliore,gpu-gbest-gpu,2,100,100,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,2,100,100,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-cpu,2,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest CPU)",0.00142088528551171,True
+PSO base vs ameliore,gpu-gbest-gpu,2,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,2,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-gpu,3,10,50,10,10,Mann-Whitney U,0.00024612812790522973,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,3,10,50,10,10,Mann-Whitney U,0.00024612812790522973,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-gpu,3,10,100,10,10,Mann-Whitney U,0.017257456083119765,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.12080219258183836,False
+PSO base vs ameliore,seq,3,10,100,10,10,Mann-Whitney U,0.00579535854433471,p<0.05,PSO base vs amélioré (séquentiel),0.04636286835467768,True
+PSO base vs ameliore,gpu-gbest-gpu,3,10,500,10,10,Mann-Whitney U,0.8501067391385259,n.s.,"PSO base vs amélioré (GPU, gBest GPU)",1.0,False
+PSO base vs ameliore,seq,3,10,500,10,10,Mann-Whitney U,0.14046504815835495,n.s.,PSO base vs amélioré (séquentiel),0.7023252407917747,False
+PSO base vs ameliore,gpu-gbest-gpu,3,50,50,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,3,50,50,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-gpu,3,50,100,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,3,50,100,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-gpu,3,50,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,3,50,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-gpu,3,100,50,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,3,100,50,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-cpu,3,100,100,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest CPU)",0.00142088528551171,True
+PSO base vs ameliore,gpu-gbest-gpu,3,100,100,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,3,100,100,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-cpu,3,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest CPU)",0.00142088528551171,True
+PSO base vs ameliore,gpu-gbest-gpu,3,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,3,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-gpu,4,10,50,10,10,Mann-Whitney U,0.3255694067409992,n.s.,"PSO base vs amélioré (GPU, gBest GPU)",1.0,False
+PSO base vs ameliore,seq,4,10,50,10,10,Mann-Whitney U,0.7337299956962472,n.s.,PSO base vs amélioré (séquentiel),1.0,False
+PSO base vs ameliore,gpu-gbest-gpu,4,10,100,10,10,Mann-Whitney U,0.9096880762234906,n.s.,"PSO base vs amélioré (GPU, gBest GPU)",1.0,False
+PSO base vs ameliore,seq,4,10,100,10,10,Mann-Whitney U,0.1122755059805569,n.s.,PSO base vs amélioré (séquentiel),0.6736530358833414,False
+PSO base vs ameliore,gpu-gbest-gpu,4,10,500,10,10,Mann-Whitney U,0.4273553138978077,n.s.,"PSO base vs amélioré (GPU, gBest GPU)",1.0,False
+PSO base vs ameliore,seq,4,10,500,10,10,Mann-Whitney U,0.3074894566186813,n.s.,PSO base vs amélioré (séquentiel),1.0,False
+PSO base vs ameliore,gpu-gbest-gpu,4,50,50,10,10,Mann-Whitney U,0.00016304893553653748,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.004891468066096125,True
+PSO base vs ameliore,seq,4,50,50,10,10,Mann-Whitney U,0.00013172960306213278,p<0.05,PSO base vs amélioré (séquentiel),0.004370730536384798,True
+PSO base vs ameliore,gpu-gbest-gpu,4,50,100,10,10,Mann-Whitney U,0.00017661101166893502,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,4,50,100,10,10,Mann-Whitney U,0.00016211073447401525,p<0.05,PSO base vs amélioré (séquentiel),0.004863322034220458,True
+PSO base vs ameliore,gpu-gbest-gpu,4,50,500,10,10,Mann-Whitney U,0.00017761066068896375,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,4,50,500,10,10,Mann-Whitney U,0.00017561553104590864,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-gpu,4,100,50,10,10,Mann-Whitney U,0.00018165114609146497,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,4,100,50,10,10,Mann-Whitney U,0.00018165114609146497,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-cpu,4,100,100,10,10,Mann-Whitney U,0.0001806347208075351,p<0.05,"PSO base vs amélioré (GPU, gBest CPU)",0.00142088528551171,True
+PSO base vs ameliore,gpu-gbest-gpu,4,100,100,10,10,Mann-Whitney U,0.00018165114609146497,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,4,100,100,10,10,Mann-Whitney U,0.00018165114609146497,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True
+PSO base vs ameliore,gpu-gbest-cpu,4,100,500,10,10,Mann-Whitney U,0.00018165114609146497,p<0.05,"PSO base vs amélioré (GPU, gBest CPU)",0.00142088528551171,True
+PSO base vs ameliore,gpu-gbest-gpu,4,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,"PSO base vs amélioré (GPU, gBest GPU)",0.00494510832673018,True
+PSO base vs ameliore,seq,4,100,500,10,10,Mann-Whitney U,0.00018267179110955002,p<0.05,PSO base vs amélioré (séquentiel),0.005092850400331351,True

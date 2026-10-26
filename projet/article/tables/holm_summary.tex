@@ -1,0 +1,20 @@
+\begin{table*}[t]
+\centering
+\caption{Bilan de la correction de Holm par famille de tests}
+\label{tab:holm-summary}
+\scriptsize
+\begin{tabular}{p{4.0cm}rrrrrr}
+\toprule
+Famille de tests & Tests totaux & Tests évaluables & Tests non testables & Significatifs avant Holm & Significatifs après Holm & Seuil \\
+\midrule
+DE séquentiel vs GPU & 108 & 100 & 8 & 9 & 0 & 0.05 \\
+Kruskal-Wallis DE (GPU) & 36 & 36 & 0 & 36 & 36 & 0.05 \\
+Kruskal-Wallis DE (séquentiel) & 36 & 36 & 0 & 35 & 35 & 0.05 \\
+PSO amélioré vs DE rand/1 (GPU, gBest GPU) & 36 & 34 & 2 & 30 & 27 & 0.05 \\
+PSO amélioré vs DE rand/1 (séquentiel) & 36 & 34 & 2 & 30 & 24 & 0.05 \\
+PSO base vs amélioré (GPU, gBest CPU) & 8 & 8 & 0 & 8 & 8 & 0.05 \\
+PSO base vs amélioré (GPU, gBest GPU) & 36 & 33 & 3 & 28 & 26 & 0.05 \\
+PSO base vs amélioré (séquentiel) & 36 & 34 & 2 & 28 & 27 & 0.05 \\
+\bottomrule
+\end{tabular}
+\end{table*}

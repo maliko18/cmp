@@ -15,6 +15,7 @@ try:
     import numpy as np
     import pandas as pd
     from scipy import stats
+    from holm import apply_holm
 except ImportError as error:
     raise SystemExit(
         f"Dependance d'analyse absente ({error.name}). "
@@ -68,7 +69,11 @@ def tex_escape(value: object) -> str:
 
 
 def write_booktabs(
-    frame: pd.DataFrame, path: Path, caption: str, label: str
+    frame: pd.DataFrame,
+    path: Path,
+    caption: str,
+    label: str,
+    column_spec: str | None = None,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="\n") as stream:
@@ -83,7 +88,7 @@ def write_booktabs(
             return
         columns = list(frame.columns)
         stream.write("\\begin{tabular}{")
-        stream.write("l" * len(columns))
+        stream.write(column_spec if column_spec is not None else "l" * len(columns))
         stream.write("}\n\\toprule\n")
         stream.write(" & ".join(tex_escape(column) for column in columns))
         stream.write(" \\\\\n\\midrule\n")
@@ -216,6 +221,8 @@ def execution_mode(version: str) -> str:
     lowered = version.lower()
     if lowered == "seq":
         return "seq"
+    if lowered == "gpu":
+        return "gpu"
     if "cpu" in lowered:
         return "gpu-gbest-cpu"
     if "gpu" in lowered:
@@ -238,6 +245,7 @@ def timing_tables(data: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
 
     data = data.copy()
     data["mode"] = data["version"].map(execution_mode)
+    data.loc[data["mode"] == "gpu-gbest-gpu", "mode"] = "gpu"
     means = data.groupby(
         ["algo", "mode", "fonction", "dim", "pop"],
         observed=True,
@@ -245,11 +253,11 @@ def timing_tables(data: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     speedups = means.reset_index()
     if "seq" not in speedups.columns:
         speedups["seq"] = np.nan
-    for mode in ("gpu-gbest-gpu", "gpu-gbest-cpu"):
+    for mode in ("gpu", "gpu-gbest-cpu"):
         if mode not in speedups.columns:
             speedups[mode] = np.nan
-    speedups["speedup_gpu_gbest"] = (
-        speedups["seq"] / speedups["gpu-gbest-gpu"]
+    speedups["speedup_gpu"] = (
+        speedups["seq"] / speedups["gpu"]
     )
     speedups["speedup_cpu_gbest"] = (
         speedups["seq"] / speedups["gpu-gbest-cpu"]
@@ -315,7 +323,7 @@ def statistical_tests(data: pd.DataFrame) -> pd.DataFrame:
         for strategy in ("rand1", "best1", "currenttobest1"):
             subset = de[de["algo"] == f"de-{strategy}"]
             seq = subset[subset["mode"] == "seq"]
-            gpu = subset[subset["mode"] == "gpu-gbest-gpu"]
+            gpu = subset[subset["mode"] == "gpu"]
             if not seq.empty and not gpu.empty:
                 add_test(
                     f"DE {strategy}: seq vs GPU", "seq vs gpu",
@@ -323,11 +331,11 @@ def statistical_tests(data: pd.DataFrame) -> pd.DataFrame:
                 )
 
         # PSO improved vs rand/1, compare only the usual GPU gBest mode.
-        for mode in ("seq", "gpu-gbest-gpu"):
+        for mode, de_mode in (("seq", "seq"), ("gpu-gbest-gpu", "gpu")):
             pso = group[group["algo"] == "pso-ameliore"]
             de_rand = group[group["algo"] == "de-rand1"]
             pso = pso[pso["mode"] == mode]
-            de_rand = de_rand[de_rand["mode"] == mode]
+            de_rand = de_rand[de_rand["mode"] == de_mode]
             if not pso.empty and not de_rand.empty:
                 add_test(
                     f"PSO ameliore vs DE rand1", mode,
@@ -346,7 +354,7 @@ def statistical_tests(data: pd.DataFrame) -> pd.DataFrame:
                     function, dimension, population, base, improved,
                 )
 
-        for mode in ("seq", "gpu-gbest-gpu"):
+        for mode in ("seq", "gpu"):
             samples = [
                 de[(de["algo"] == f"de-{strategy}") & (de["mode"] == mode)]
                 ["minimum"].to_numpy(dtype=float)
@@ -393,8 +401,11 @@ def pso_vs_de_gpu(
         return pd.DataFrame(columns=PSO_DE_GPU_COLUMNS)
 
     gpu = data[
-        (data["version"].map(execution_mode) == "gpu-gbest-gpu")
-        & data["algo"].isin(("pso-ameliore", "de-rand1"))
+    (
+        (data["algo"] == "pso-ameliore")
+        & (data["version"] == "gpu-gbest-gpu")
+    )
+    | ((data["algo"] == "de-rand1") & (data["version"] == "gpu"))
     ]
     if gpu.empty:
         print(
@@ -462,13 +473,13 @@ def pso_vs_de_gpu(
             return "Identiques (=)"
         if conclusion != "p<0.05":
             if conclusion == "n.s.":
-                return "Pas de difference significative"
-            return "Donnees insuffisantes"
+                return "Pas de différence significative"
+            return "Données insuffisantes"
         if row["pso_minimum_mean"] < row["de_minimum_mean"]:
-            return "PSO ameliore GPU"
+            return "PSO amélioré GPU"
         if row["de_minimum_mean"] < row["pso_minimum_mean"]:
-            return "DE rand1 GPU"
-        return "Moyennes egales (p<0.05)"
+            return "DE rand/1 GPU"
+        return "Moyennes égales (p<0.05)"
 
     comparison["quality_winner"] = comparison.apply(quality_winner, axis=1)
     comparison["mann_whitney_conclusion"] = comparison[
@@ -523,49 +534,151 @@ def pso_de_article_latex_table(comparison: pd.DataFrame) -> pd.DataFrame:
     """Réduit le tableau Pop=100 aux colonnes nécessaires à la lecture."""
     columns = [
         "Fonction", "Dim.",
-        "PSO améliore (moy. ± ET; méd.; s)",
-        "DE rand1 (moy. ± ET; méd.; s)",
-        "Temps DE / PSO", "p Mann–Whitney", "Meilleur qualité",
+        "PSO amélioré (moy. ± ET; méd.; s)",
+        "DE rand/1 (moy. ± ET; méd.; s)",
+        "Temps DE / PSO", "p Mann–Whitney", "Décision qualité",
     ]
     if comparison.empty:
         return pd.DataFrame(columns=columns)
 
+    def decimal_comma(value: float, digits: int = 5) -> str:
+        return f"{value:.{digits}g}".replace(".", ",")
+
     def describe(
         mean: float, std: float, median: float, seconds: float
     ) -> str:
-        std_value = f"{std:.3g}" if pd.notna(std) else "--"
+        std_value = decimal_comma(std, 3) if pd.notna(std) else "--"
         return (
-            f"{mean:.5g} $\\pm$ {std_value}; "
-            f"{median:.5g}; {seconds:.4g}"
+            f"{decimal_comma(mean)} $\\pm$ {std_value}; "
+            f"{decimal_comma(median)}; {decimal_comma(seconds, 4)}"
         )
 
     rows = []
+    function_names = {
+        1: "Sphere",
+        2: "Rastrigin",
+        3: "Rosenbrock",
+        4: "Griewank",
+    }
     for row in comparison.itertuples(index=False):
         p_value = row.mann_whitney_p_value
         rows.append({
-            "Fonction": int(row.fonction),
+            "Fonction": function_names.get(int(row.fonction), int(row.fonction)),
             "Dim.": int(row.dim),
-            "PSO améliore (moy. ± ET; méd.; s)": describe(
+            "PSO amélioré (moy. ± ET; méd.; s)": describe(
                 row.pso_minimum_mean,
                 row.pso_minimum_std,
                 row.pso_minimum_median,
                 row.pso_time_mean_s,
             ),
-            "DE rand1 (moy. ± ET; méd.; s)": describe(
+            "DE rand/1 (moy. ± ET; méd.; s)": describe(
                 row.de_minimum_mean,
                 row.de_minimum_std,
                 row.de_minimum_median,
                 row.de_time_mean_s,
             ),
-            "Temps DE / PSO": f"{row.time_ratio_de_over_pso:.4g}",
+            "Temps DE / PSO": decimal_comma(row.time_ratio_de_over_pso, 4),
             "p Mann–Whitney": (
-                f"{p_value:.4g}"
+                decimal_comma(p_value, 4)
                 if pd.notna(p_value)
                 else row.mann_whitney_conclusion
             ),
-            "Meilleur qualité": row.quality_winner,
+            "Décision qualité": row.quality_winner,
         })
     return pd.DataFrame(rows, columns=columns)
+
+
+def quality_pop100_table(data: pd.DataFrame) -> pd.DataFrame:
+    """Resume les minima des deux PSO et du DE rand/1 GPU, Pop=100."""
+    selected = data[
+        (data["pop"] == 100)
+        & (
+            (
+                data["algo"].isin(("pso", "pso-ameliore"))
+                & (data["version"] == "gpu-gbest-gpu")
+            )
+            | ((data["algo"] == "de-rand1") & (data["version"] == "gpu"))
+        )
+    ]
+    if selected.empty:
+        print(
+            "Avertissement: aucune donnee GPU Pop=100 pour le tableau de qualite.",
+            file=sys.stderr,
+        )
+        return pd.DataFrame(columns=[
+            "fonction", "dim", "pso_base_mean", "pso_base_std",
+            "pso_base_median", "pso_ameliore_mean", "pso_ameliore_std",
+            "pso_ameliore_median", "de_rand1_mean", "de_rand1_std",
+            "de_rand1_median",
+        ])
+
+    grouped = selected.groupby(
+        ["algo", "fonction", "dim"], observed=True
+    )["minimum"].agg(["mean", "std", "median"]).unstack("algo")
+    grouped.columns = [
+        f"{statistic}_{algorithm}"
+        for statistic, algorithm in grouped.columns
+    ]
+    result = grouped.reset_index().rename(columns={
+        "mean_pso": "pso_base_mean",
+        "std_pso": "pso_base_std",
+        "median_pso": "pso_base_median",
+        "mean_pso-ameliore": "pso_ameliore_mean",
+        "std_pso-ameliore": "pso_ameliore_std",
+        "median_pso-ameliore": "pso_ameliore_median",
+        "mean_de-rand1": "de_rand1_mean",
+        "std_de-rand1": "de_rand1_std",
+        "median_de-rand1": "de_rand1_median",
+    })
+    expected = [
+        "pso_base_mean", "pso_base_std", "pso_base_median",
+        "pso_ameliore_mean", "pso_ameliore_std", "pso_ameliore_median",
+        "de_rand1_mean", "de_rand1_std", "de_rand1_median",
+    ]
+    for column in expected:
+        if column not in result:
+            result[column] = np.nan
+    return result[["fonction", "dim", *expected]].sort_values(
+        ["fonction", "dim"]
+    ).reset_index(drop=True)
+
+
+def quality_pop100_latex_table(summary: pd.DataFrame) -> pd.DataFrame:
+    function_names = {
+        1: "Sphere",
+        2: "Rastrigin",
+        3: "Rosenbrock",
+        4: "Griewank",
+    }
+
+    def decimal_comma(value: float, digits: int = 5) -> str:
+        return f"{value:.{digits}g}".replace(".", ",")
+
+    def describe(mean: float, std: float, median: float) -> str:
+        if pd.isna(mean):
+            return "--"
+        deviation = decimal_comma(std, 3) if pd.notna(std) else "--"
+        median_text = decimal_comma(median) if pd.notna(median) else "--"
+        return f"{decimal_comma(mean)} $\\pm$ {deviation}; {median_text}"
+
+    rows = []
+    for row in summary.itertuples(index=False):
+        rows.append({
+            "Fonction": function_names.get(int(row.fonction), str(row.fonction)),
+            "Dim.": int(row.dim),
+            "PSO base (moy. ± ET; méd.)": describe(
+                row.pso_base_mean, row.pso_base_std, row.pso_base_median
+            ),
+            "PSO amélioré (moy. ± ET; méd.)": describe(
+                row.pso_ameliore_mean,
+                row.pso_ameliore_std,
+                row.pso_ameliore_median,
+            ),
+            "DE rand/1 (moy. ± ET; méd.)": describe(
+                row.de_rand1_mean, row.de_rand1_std, row.de_rand1_median
+            ),
+        })
+    return pd.DataFrame(rows)
 
 
 def save_placeholder_plot(path: Path, message: str) -> None:
@@ -580,8 +693,11 @@ def save_placeholder_plot(path: Path, message: str) -> None:
 def make_pso_de_gpu_figure(data: pd.DataFrame, output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     gpu = data[
-        (data["version"].map(execution_mode) == "gpu-gbest-gpu")
-        & (data["algo"].isin(("pso-ameliore", "de-rand1")))
+        (
+            (data["algo"] == "pso-ameliore")
+            & (data["version"] == "gpu-gbest-gpu")
+        )
+        | ((data["algo"] == "de-rand1") & (data["version"] == "gpu"))
     ]
     if gpu.empty:
         save_placeholder_plot(
@@ -696,7 +812,7 @@ def make_figures(data: pd.DataFrame, output_dir: Path) -> None:
             ):
                 series = algo_rows[algo_rows["dim"] == dimension]
                 for mode_index, (mode, column) in enumerate((
-                    ("GPU gBest", "speedup_gpu_gbest"),
+                    ("GPU", "speedup_gpu"),
                     ("CPU gBest", "speedup_cpu_gbest"),
                 )):
                     valid = series.dropna(subset=[column]).sort_values("pop")
@@ -782,7 +898,9 @@ def run_analysis(input_dir: Path, table_dir: Path, figure_dir: Path) -> None:
     summary = summary_tables(data)
     timing, speedups = timing_tables(data)
     tests = statistical_tests(data)
+    tests_holm, holm_summary = apply_holm(tests)
     pso_de_comparison = pso_vs_de_gpu(data, tests)
+    quality_summary = quality_pop100_table(data)
     pso_de_article = pso_de_article_latex_table(
         pso_de_comparison[
             pso_de_comparison["pop"] == 100
@@ -790,6 +908,7 @@ def run_analysis(input_dir: Path, table_dir: Path, figure_dir: Path) -> None:
         if not pso_de_comparison.empty
         else pso_de_comparison
     )
+    quality_article = quality_pop100_latex_table(quality_summary)
 
     table_dir.mkdir(parents=True, exist_ok=True)
     summary.to_csv(
@@ -803,6 +922,17 @@ def run_analysis(input_dir: Path, table_dir: Path, figure_dir: Path) -> None:
     )
     tests.to_csv(
         table_dir / "statistical_tests.csv", index=False, lineterminator="\n"
+    )
+    tests_holm.to_csv(
+        table_dir / "statistical_tests_holm.csv",
+        index=False,
+        lineterminator="\n",
+    )
+    holm_summary.to_csv(
+        table_dir / "holm_summary.csv", index=False, lineterminator="\n"
+    )
+    quality_summary.to_csv(
+        table_dir / "qualite_pop100.csv", index=False, lineterminator="\n"
     )
     pso_de_comparison.to_csv(
         table_dir / "pso_vs_de_gpu.csv", index=False, lineterminator="\n"
@@ -852,8 +982,32 @@ def run_analysis(input_dir: Path, table_dir: Path, figure_dir: Path) -> None:
     write_booktabs(
         pso_de_article,
         table_dir / "pso_vs_de_gpu_pop100.tex",
-        "Comparaison GPU PSO ameliore et DE rand1, Pop=100",
+        "Comparaison GPU PSO amélioré et DE rand/1, Pop=100",
         "tab:pso-vs-de-gpu-pop100",
+        column_spec="lrp{3.0cm}p{3.0cm}rrp{2.2cm}p{2.3cm}",
+    )
+    write_booktabs(
+        quality_article,
+        table_dir / "qualite_pop100.tex",
+        "Qualité des minima GPU par algorithme, Pop=100",
+        "tab:qualite-pop100",
+        column_spec="lrp{3.5cm}p{3.5cm}p{3.5cm}",
+    )
+    holm_table = holm_summary.rename(columns={
+        "famille": "Famille de tests",
+        "tests_total": "Tests totaux",
+        "tests_evaluables": "Tests évaluables",
+        "tests_non_testables": "Tests non testables",
+        "significatifs_bruts": "Significatifs avant Holm",
+        "significatifs_holm": "Significatifs après Holm",
+        "seuil_alpha": "Seuil",
+    })
+    write_booktabs(
+        holm_table,
+        table_dir / "holm_summary.tex",
+        "Bilan de la correction de Holm par famille de tests",
+        "tab:holm-summary",
+        column_spec="p{4.0cm}rrrrrr",
     )
     make_figures(data, figure_dir)
     make_pso_de_gpu_figure(
