@@ -18,7 +18,7 @@
 \newcommand{\PSO}{\textsc{PSO}}
 \newcommand{\DE}{\textsc{DE}}
 
-\title{A Corrected CUDA Particle Swarm Optimizer and a Planned Differential Evolution Study}
+\title{Corrected CUDA Particle Swarm Optimization and Differential Evolution}
 
 \author{
 \IEEEauthorblockN{\todo{Author names}}
@@ -30,21 +30,19 @@
 \maketitle
 
 \begin{abstract}
-This paper reports the current state of a CUDA-based particle swarm
-optimization (PSO) project and defines the experimental framework for a
-subsequent comparison with differential evolution (DE). The implementation
-supports four shifted benchmark functions, a sequential reference, and a
-massively parallel CUDA version. Corrections address the original program's
-fixed parameters, evaluation budget, shared device temporaries, random-number
-generation, personal-best evaluation, and global-best communication. Two
-global-best strategies are available: a CPU scan with per-iteration memory
-transfers and a GPU reduction. A further PSO variant uses linearly decreasing
-inertia and a bounded velocity. Preliminary sequential results show that this
-variant resolves the observed high-dimensional Sphere divergence, while
-Rastrigin and Rosenbrock remain challenging at dimension 100. Reported GPU
-timings suggest that avoiding repeated global-best transfers can improve
-runtime, but a complete repeated campaign and a DE comparison remain future
-work.
+This paper reports a CUDA-based particle swarm optimization (PSO) project and
+sequential and CUDA implementations of differential evolution (DE). The
+programs share four shifted benchmark functions and support CPU and GPU
+execution. PSO corrections address the original program's fixed parameters,
+evaluation budget, shared device temporaries, random-number generation,
+personal-best evaluation, and global-best communication. Its global-best
+strategies use either a CPU scan with per-iteration transfers or a GPU
+reduction. A second PSO variant uses linearly decreasing inertia and bounded
+velocity. Preliminary sequential results show that this variant resolves the
+observed high-dimensional Sphere divergence. Three-run sequential DE tests
+are also reported, but the CUDA DE source still requires compilation and
+execution on the target GPU; a complete repeated statistical campaign remains
+future work.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -68,15 +66,17 @@ introduced by Storn and Price~\cite{storn1997de}.
 The project began with an instructor-provided CUDA PSO. Its original fixed
 dimensions and population, incorrect evaluation budget, shared device
 temporaries, and incomplete benchmark implementations motivated a corrected
-implementation. A sequential implementation and a second PSO variant were
-then added. This paper documents those implemented features and preliminary
-measurements; it does not present a completed DE implementation or a
-statistically complete comparison.
+implementation. A sequential implementation, a second PSO variant, and
+sequential and CUDA DE implementations were then added. This paper documents
+those features and preliminary sequential measurements; it does not present a
+statistically complete comparison, and the CUDA DE still needs target-GPU
+validation.
 
 The main contributions documented here are: (i) a shared CPU/GPU definition
 of four shifted objectives; (ii) a sequential and a CUDA PSO with selectable
 global-best handling; (iii) a safeguarded PSO variant for high-dimensional
-search; and (iv) an experimental plan for a future PSO--DE comparison.
+search; and (iv) sequential and CUDA implementations of three DE strategies,
+with a preliminary sequential evaluation.
 
 \section{GPU Programming}
 \label{sec:gpu}
@@ -109,72 +109,52 @@ documented by NVIDIA~\cite{nvidiaCudaGuide}.
 
 \section{Differential Evolution}
 \label{sec:de}
-The project is intended to compare PSO with sequential and massively parallel
-DE. Neither DE implementation nor its measurements are part of the current
-code described here.
+The project contains sequential and CUDA DE programs sharing the same
+benchmark definitions and evaluation budget. Both expose \texttt{rand1},
+\texttt{best1}, and \texttt{currenttobest1} binomial-crossover strategies.
+Their defaults are $F=0.5$ and $CR=0.9$. The sequence of strategies follows
+the standard DE/rand/1, DE/best/1, and DE/current-to-best/1 mutation forms
+\cite{storn1997de}.
 
 \subsection{Sequential Differential Evolution}
 \label{sec:de-seq}
-\todo{Implement and document the sequential DE variant: mutation strategy,
-crossover, selection, parameter settings, pseudocode, and validation.}
+The initial population is sampled uniformly from the selected function's
+domain. In each generation, every trial vector is formed from the unchanged
+current population. For DE/rand/1, the mutant is
+$\mathbf{x}_{r_1}+F(\mathbf{x}_{r_2}-\mathbf{x}_{r_3})$; DE/best/1 replaces
+$\mathbf{x}_{r_1}$ with the current best; DE/current-to-best/1 uses
+$\mathbf{x}_i+F(\mathbf{x}_{best}-\mathbf{x}_i)
++F(\mathbf{x}_{r_1}-\mathbf{x}_{r_2})$. Donor indices are distinct and
+exclude target $i$. Binomial crossover forces one randomly selected
+coordinate from the mutant, then clamps the trial to the domain. Greedy
+selection replaces a parent when the trial fitness is no worse.
 
-\begin{figure}[t]
-\centering
-\begin{tikzpicture}[
-  participant/.style={draw,rounded corners,align=center,
-                      minimum width=2.0cm,minimum height=0.65cm},
-  flow/.style={-{Latex},thick},
-  every node/.style={font=\footnotesize}
-]
-\node[participant] (driver) {Sequential driver};
-\node[participant,right=0.4cm of driver] (de) {DE generation\\\todo{details}};
-\draw[dashed] (driver.south) -- ++(0,-1.8);
-\draw[dashed] (de.south) -- ++(0,-1.8);
-\draw[flow] ([yshift=-0.65cm]driver.south) --
-  node[above,sloped]{population and parameters} ([yshift=-0.65cm]de.south);
-\draw[flow] ([yshift=-1.3cm]de.south) --
-  node[above,sloped]{TODO: selected population}
-  ([yshift=-1.3cm]driver.south);
-\end{tikzpicture}
-\caption{Placeholder UML sequence diagram for the future sequential DE.}
-\label{fig:de-seq-placeholder}
-\end{figure}
+The total evaluation budget is $10^4n$, including the initial population.
+Thus $\lfloor10^4n/N\rfloor$ complete populations are evaluated in total: one
+initial population followed by one fewer trial generations. Any remainder
+smaller than a population is unused. The sequential implementation uses this
+same rule as its CUDA counterpart.
 
 \subsection{Massively Parallel Differential Evolution}
 \label{sec:de-gpu}
-\todo{Implement and document the CUDA DE variant, its kernel mapping,
-memory transfers, random-number generation, and synchronization. Add its
-sequential and parallel UML diagrams after implementation.}
-
-\begin{figure}[t]
-\centering
-\begin{tikzpicture}[
-  participant/.style={draw,rounded corners,align=center,
-                      minimum width=1.45cm,minimum height=0.65cm},
-  flow/.style={-{Latex},thick},
-  every node/.style={font=\scriptsize}
-]
-\node[participant] (host) {CPU / host};
-\node[participant,right=0.2cm of host] (device) {GPU / device};
-\node[participant,right=0.2cm of device] (kernel) {DE kernel\\\todo{mapping}};
-\draw[dashed] (host.south) -- ++(0,-1.8);
-\draw[dashed] (device.south) -- ++(0,-1.8);
-\draw[dashed] (kernel.south) -- ++(0,-1.8);
-\draw[flow] ([yshift=-0.65cm]host.south) --
-  node[above,sloped]{TODO: population} ([yshift=-0.65cm]device.south);
-\draw[flow] ([yshift=-1.1cm]device.south) --
-  node[above,sloped]{TODO: launch} ([yshift=-1.1cm]kernel.south);
-\draw[flow] ([yshift=-1.6cm]kernel.south) --
-  node[above,sloped]{TODO: results} ([yshift=-1.6cm]host.south);
-\end{tikzpicture}
-\caption{Placeholder UML sequence diagram for the future CUDA DE.}
-\label{fig:de-gpu-placeholder}
-\end{figure}
+The CUDA implementation assigns one thread to each individual; that thread
+loops over its coordinates to construct the trial and evaluate its fitness.
+Separate kernels build and evaluate all trials, select the next population
+into a non-aliasing buffer, and reduce the current fitness array to its best
+individual. Current and next population buffers are exchanged between
+generations, while a separate trial buffer prevents in-place reads and
+writes. Per-individual cuRAND states are initialized from the run seed and
+individual index. The generation count is fixed and no host-device transfer
+or synchronization occurs within the generation loop. CUDA events time only
+that loop; allocations, initialization, and result transfers are outside the
+measured interval. The implementation has not yet been compiled or run on
+the target T4, so its correctness and performance there remain to be
+validated.
 
 \subsection{Implemented PSO Reference}
 \label{sec:pso}
 This subsection records the algorithm that is currently implemented and
-provides the reference against which the future DE variants will be compared.
+provides the reference for the DE implementations.
 
 \subsubsection{Sequential PSO}
 \label{sec:pso-seq}
@@ -216,15 +196,18 @@ $c_1=c_2=1.5$ and, for the base variant, $\omega=0.5$.
 \end{algorithmic}
 \end{algorithm}
 
-The same evaluation budget is used by both variants:
+The historical PSO iteration count is:
 \begin{equation}
   E_{\max}=10^4 n,\qquad
   T=\left\lfloor\frac{10^4 n}{N}\right\rfloor,
 \end{equation}
-where $n$ is the dimension and $N$ is the population. The implementation uses
-integer division; when $10^4n$ is not divisible by $N$, the number of
-particle-fitness evaluations is therefore the largest complete-iteration
-budget not exceeding $E_{\max}$.
+where $n$ is the dimension and $N$ is the population. The initial population
+is evaluated before these $T$ update iterations, matching the existing PSO
+implementation. Consequently, the PSO executes $N(T+1)$ fitness evaluations;
+the initial population is outside the historical update-iteration budget.
+When $10^4n$ is not divisible by $N$, integer division uses only complete
+update iterations. In contrast, the DE budget counts the initial population,
+as specified in Section~\ref{sec:de-seq}; the PSO loop is left unchanged.
 
 \subsubsection{Massively Parallel CUDA PSO}
 \label{sec:pso-gpu}
@@ -484,8 +467,36 @@ optimum. The improved method also substantially lowers the reported
 Rosenbrock values, but its dimension-100 result remains above the bias.
 Rastrigin and Rosenbrock remain difficult at dimension 100 for this PSO
 configuration. The shift and bias do not change the underlying search
-difficulty; these observations motivate the planned DE comparison, rather
-than establishing that DE will perform better.
+difficulty.
+
+Table~\ref{tab:de-sequential-preliminary} summarizes the three-run sequential
+DE campaign executed for this project. Each entry is the mean best fitness;
+raw run-level CSV files and standard deviations were not retained. The
+default DE/rand/1/bin results at dimension 100 are at least as good as the
+reported improved-PSO means for Sphere, Rastrigin, and Rosenbrock. The other
+strategies show that performance is strategy- and objective-dependent; these
+small preliminary samples are not a statistical comparison.
+\begin{table*}[t]
+\centering
+\caption{Preliminary sequential DE mean minima over three runs}
+\label{tab:de-sequential-preliminary}
+\begin{tabular}{clrrr}
+\toprule
+\textbf{Dim.} & \textbf{Function} & \textbf{rand/1/bin} &
+\textbf{best/1/bin} & \textbf{current-to-best/1/bin}\\
+\midrule
+10 & Sphere     & -450.000 & -439.611 & -449.992\\
+10 & Rastrigin  & -327.659 & -311.410 & -327.015\\
+10 & Rosenbrock & 392.104 & 97752.484 & 3184.123\\
+10 & Griewank   & -179.984 & -179.579 & -179.890\\
+\midrule
+100 & Sphere     & -450.000 & 49029.773 & 25466.590\\
+100 & Rastrigin  & -147.364 & 275.673 & -31.510\\
+100 & Rosenbrock & 538.030 & $5.508\times10^9$ & $1.775\times10^9$\\
+100 & Griewank   & -179.997 & 361.173 & 37.693\\
+\bottomrule
+\end{tabular}
+\end{table*}
 
 The supplied three-run GPU measurements for the improved variant at
 dimension 100 and population 100 are summarized in
@@ -542,33 +553,83 @@ using Levy, dimension 3, 512 particles, and 30,000 iterations, reportedly
 took 10.4 s. This is a historical baseline with a different objective and
 workload and is not directly comparable to the corrected experiments.
 
-\begin{table*}[t]
-\centering
-\caption{Template for the complete PSO--DE campaign (results pending)}
-\label{tab:full-campaign}
-\begin{tabular}{p{1.4cm}p{1.2cm}p{1.5cm}p{1.5cm}p{0.8cm}p{3.5cm}p{4.0cm}}
-\toprule
-\textbf{Algorithm} & \textbf{Dim.} & \textbf{Population} &
-\textbf{Function} & \textbf{Runs} & \textbf{Fitness (mean $\pm$ SD)} &
-\textbf{Time; statistical tests}\\
-\midrule
-\todo{PSO / DE} & 10, 50, 100 & 50, 100, 500 &
-4 functions & 10 & \todo{mean $\pm$ standard deviation} &
-\todo{time and Wilcoxon / Kruskal--Wallis results}\\
-\bottomrule
-\end{tabular}
-\end{table*}
-\todo{Populate the campaign for every algorithm, variant, dimension,
-population, and benchmark; report the statistical test design, corrections
-for multiple comparisons, and effect sizes.}
+The complete ten-run campaign summaries and statistical tests are generated
+from the run-level CSV files and included in Section~\ref{sec:generated-analysis}.
+The reported tests use an unadjusted nominal significance threshold; effect
+sizes and corrections for multiple comparisons remain a subject for further
+analysis.
 
 \subsection{Comparison with the Literature}
 \label{sec:literature}
-\todo{Compare the completed CUDA DE implementation and measured workload with
+\todo{After target-GPU validation, compare the CUDA DE implementation and
+measured workload with
 \emph{An Improved CUDA-Based Implementation of Differential Evolution}.
 Verify the bibliographic record and ensure that hardware, objective
 definitions, evaluation budgets, and timing boundaries are comparable before
 making quantitative claims.}
+
+\subsection{Generated Campaign Analysis}
+\label{sec:generated-analysis}
+The campaign analysis script reads only CSV files under
+\texttt{results/}; incomplete inputs are reported and missing groups are
+omitted rather than imputed. The generated summary tables report the mean and
+sample standard deviation of both minimum fitness and error from the known
+benchmark bias. Timing summaries and sequential-to-GPU speedups are reported
+separately. The figures show runtime versus dimension by population,
+speedup versus population, and representative minimum-fitness box plots.
+Statistical comparisons use the two-sided Mann--Whitney rank-sum test for
+independent runs with different seeds, and Kruskal--Wallis for the three DE
+strategies. An ``='' entry marks samples that are all identical, for which a
+test is not meaningful. A nominal significance threshold of 0.05 is used
+without a multiple-comparison correction. Rapid-run or missing-file outputs
+are exploratory and are not a substitute for the full ten-run campaign.
+
+\paragraph{GPU comparison at Pop=100}
+Table~\ref{tab:pso-vs-de-gpu-pop100} compares the improved PSO with GPU
+global-best reduction against DE/rand/1 on the same function, dimension, and
+population. The quality label selects an algorithm only when the existing
+two-sided Mann--Whitney test is significant at $p<0.05$ and its sample mean
+minimum is lower; a non-significant result is reported as no significant
+difference. Runtime ratios and descriptive statistics are computed directly
+from the corresponding run-level CSV rows.
+
+\input{tables/pso_vs_de_gpu_pop100.tex}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/pso_vs_de_gpu_runtime.pdf}
+\caption{Measured GPU runtime for improved PSO with GPU global-best
+reduction and DE/rand/1 as a function of dimension, separated by population
+and benchmark function.}
+\label{fig:pso-vs-de-gpu-runtime}
+\end{figure*}
+
+\input{tables/minimum_summary.tex}
+\input{tables/timing_summary.tex}
+\input{tables/speedup_summary.tex}
+\input{tables/statistical_tests.tex}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/runtime_vs_dimension.pdf}
+\caption{Mean wall-clock time versus dimension, separated by population.}
+\label{fig:generated-runtime}
+\end{figure*}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/speedup_vs_population.pdf}
+\caption{Measured sequential-to-GPU speedup versus population.}
+\label{fig:generated-speedup}
+\end{figure}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/minimum_boxplots.pdf}
+\caption{Minimum fitness over independent runs for representative
+configurations.}
+\label{fig:generated-minima}
+\end{figure*}
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -578,12 +639,12 @@ a bounded-velocity variant. Preliminary results indicate that the improved
 variant addresses the observed Sphere divergence at dimension 100, while
 Rastrigin and Rosenbrock remain difficult at that dimension. Preliminary
 timings suggest a benefit from computing the global best on the GPU, but a
-complete campaign is still required. The next steps are to implement both
-DE variants, collect reproducible ten-run results across all specified
-configurations, and perform the planned statistical and literature
-comparisons.
-\todo{Replace this provisional conclusion after the complete PSO--DE
-experiments and statistical analysis.}
+complete ten-run sequential and GPU campaign has now been analyzed with the
+generated tables and figures. The PSO--DE GPU comparison reports descriptive
+fitness and runtime alongside the existing Mann--Whitney tests, distinguishing
+significant quality differences from non-significant results. Further work
+should address multiple-comparison corrections, effect sizes, and comparisons
+with literature under matching benchmark and timing conditions.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

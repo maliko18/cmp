@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-nvcc -O2 -arch=sm_75 -o pso_gpu main.cpp kernel.cu
-g++ -O2 -std=c++17 -o pso_seq pso_seq.cpp
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "${ROOT_DIR}"
+
+make pso_gpu pso_seq
 
 echo "Vérification des points optimaux x=o"
 ./pso_gpu --check-benchmarks

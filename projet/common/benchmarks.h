@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "params.h"
+
 #ifdef __CUDACC__
 #define BENCHMARK_HD __host__ __device__
 #else
@@ -14,37 +16,11 @@
 
 namespace benchmarks {
 
-enum class Variant {
-    Base,
-    Improved
-};
-
-namespace pso_parameters {
-constexpr float baseInertia = 0.5f;
-constexpr float cognitive = 1.5f;
-constexpr float social = 1.5f;
-constexpr float inertiaMaximum = 0.9f;
-constexpr float inertiaMinimum = 0.4f;
-constexpr float maximumVelocityFactor = 0.1f;
-}  // namespace pso_parameters
-
 struct Domain {
     float minimum;
     float maximum;
     float bias;
 };
-
-BENCHMARK_HD inline float inertia(Variant variant, int iteration,
-                                  int iterations) {
-    if (variant == Variant::Base || iterations <= 1) {
-        return pso_parameters::baseInertia;
-    }
-    const float progress = static_cast<float>(iteration) /
-                           static_cast<float>(iterations - 1);
-    return pso_parameters::inertiaMaximum -
-        (pso_parameters::inertiaMaximum - pso_parameters::inertiaMinimum) *
-            progress;
-}
 
 BENCHMARK_HD inline bool is_valid_function(int function) {
     return function >= 1 && function <= 4;
