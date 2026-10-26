@@ -14,6 +14,7 @@ namespace {
 
 constexpr int kThreads = 256;
 
+/** Transforme toute erreur CUDA en exception descriptive. */
 void checkCuda(cudaError_t status, const char* operation) {
     if (status != cudaSuccess) {
         throw std::runtime_error(std::string(operation) + ": " +
@@ -21,6 +22,7 @@ void checkCuda(cudaError_t status, const char* operation) {
     }
 }
 
+/** Verifie le lancement et termine le kernel avant de poursuivre. */
 void checkKernelLaunch(const char* operation) {
     checkCuda(cudaGetLastError(), operation);
     checkCuda(cudaDeviceSynchronize(), operation);
@@ -29,6 +31,7 @@ void checkKernelLaunch(const char* operation) {
 template <typename T>
 class DeviceBuffer {
 public:
+    /** Alloue count elements dans la memoire globale du GPU. */
     explicit DeviceBuffer(std::size_t count) : pointer_(nullptr) {
         if (count > std::numeric_limits<std::size_t>::max() / sizeof(T)) {
             throw std::length_error("Taille de mémoire CUDA trop grande.");
@@ -37,12 +40,14 @@ public:
                              count * sizeof(T)), "cudaMalloc");
     }
 
+    /** Libere automatiquement la memoire allouee. */
     ~DeviceBuffer() {
         if (pointer_ != nullptr) {
             cudaFree(pointer_);
         }
     }
 
+    /** Retourne le pointeur utilisable par les appels CUDA. */
     T* get() const { return pointer_; }
 
     DeviceBuffer(const DeviceBuffer&) = delete;
@@ -54,16 +59,19 @@ private:
 
 class CudaEvent {
 public:
+    /** Cree un evenement CUDA pour mesurer le temps GPU. */
     CudaEvent() : event_() {
         checkCuda(cudaEventCreate(&event_), "cudaEventCreate");
     }
 
+    /** Detruit l'evenement CUDA lorsqu'il sort de portee. */
     ~CudaEvent() {
         if (event_ != nullptr) {
             cudaEventDestroy(event_);
         }
     }
 
+    /** Retourne le handle de l'evenement. */
     cudaEvent_t get() const { return event_; }
 
     CudaEvent(const CudaEvent&) = delete;
@@ -73,6 +81,7 @@ private:
     cudaEvent_t event_;
 };
 
+/** Initialise un etat cuRAND par coordonnee de particule. */
 __global__ void initializeRandomStates(curandState* states,
                                        std::size_t size,
                                        std::uint64_t seed) {
@@ -84,6 +93,12 @@ __global__ void initializeRandomStates(curandState* states,
     }
 }
 
+/**
+ * Met a jour une coordonnee de particule selon l'equation PSO.
+ *
+ * Chaque thread traite une coordonnee. Les termes cognitif et social attirent
+ * la particule vers son meilleur personnel et vers le meilleur global.
+ */
 __global__ void updateParticles(float* positions, float* velocities,
                                 const float* pBests, const float* gBest,
                                 curandState* states, std::size_t size,
@@ -119,6 +134,9 @@ __global__ void updateParticles(float* positions, float* velocities,
     positions[index] = position;
 }
 
+/**
+ * Evalue chaque particule et actualise son meilleur personnel si necessaire.
+ */
 __global__ void updatePersonalBests(const float* positions, float* pBests,
                                     float* pBestFitness, int function,
                                     int dim, int pop) {
@@ -140,6 +158,9 @@ __global__ void updatePersonalBests(const float* positions, float* pBests,
     }
 }
 
+/**
+ * Reduit les meilleurs personnels pour obtenir le meilleur global GPU.
+ */
 __global__ void reduceGlobalBest(const float* pBests,
                                  const float* pBestFitness, float* gBest,
                                  float* bestFitness, int dim, int pop) {
@@ -187,6 +208,7 @@ __global__ void reduceGlobalBest(const float* pBests,
     }
 }
 
+/** Evalue les quatre benchmarks CUDA a leur optimum analytique. */
 __global__ void checkBenchmarkOptima(float* results) {
     const int function = threadIdx.x + 1;
     if (function > 4) {
@@ -200,6 +222,7 @@ __global__ void checkBenchmarkOptima(float* results) {
     results[function - 1] = benchmarks::fitness(point, 10, function);
 }
 
+/** Calcule le nombre de blocs necessaires pour un nombre de threads donne. */
 int blockCount(std::size_t size) {
     if (size == 0 ||
         size > std::numeric_limits<std::size_t>::max() - (kThreads - 1)) {
@@ -214,6 +237,7 @@ int blockCount(std::size_t size) {
 
 }  // namespace
 
+/** Lance le test CUDA des benchmarks et recopie ses resultats vers l'hote. */
 extern "C" void cuda_check_benchmarks(float* results) {
     if (results == nullptr) {
         throw std::invalid_argument("Le resultat du test CUDA est nul.");
@@ -227,6 +251,13 @@ extern "C" void cuda_check_benchmarks(float* results) {
               "cudaMemcpy verification D2H");
 }
 
+/**
+ * Orchestre le PSO CUDA et ses transferts de donnees.
+ *
+ * Le mode CPU recopie les meilleurs personnels a chaque iteration pour
+ * calculer gBest sur l'hote. Le mode GPU utilise une reduction CUDA et evite
+ * ces transferts intermediaires.
+ */
 extern "C" void cuda_pso(float* positions, float* velocities,
                          float* pBests, float* pBestFitness, float* gBest,
                          float* bestFitness, int function, int dim, int pop,

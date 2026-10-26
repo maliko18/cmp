@@ -16,6 +16,7 @@ namespace {
 
 constexpr int kThreads = 256;
 
+/** Transforme une erreur CUDA en exception C++ explicite. */
 void checkCuda(cudaError_t status, const char* operation) {
     if (status != cudaSuccess) {
         throw std::runtime_error(std::string(operation) + ": " +
@@ -23,6 +24,7 @@ void checkCuda(cudaError_t status, const char* operation) {
     }
 }
 
+/** Verifie l'erreur produite par le lancement du dernier kernel. */
 void checkKernelLaunch(const char* operation) {
     checkCuda(cudaGetLastError(), operation);
 }
@@ -30,6 +32,10 @@ void checkKernelLaunch(const char* operation) {
 template <typename T>
 class DeviceBuffer {
 public:
+    /**
+     * Alloue count elements dans la memoire globale CUDA.
+     * @throws std::length_error si la taille est nulle ou deborde.
+     */
     explicit DeviceBuffer(std::size_t count) : pointer_(nullptr) {
         if (count == 0 ||
             count > std::numeric_limits<std::size_t>::max() / sizeof(T)) {
@@ -39,12 +45,14 @@ public:
                              count * sizeof(T)), "cudaMalloc");
     }
 
+    /** Libere automatiquement la memoire CUDA detenue par le buffer. */
     ~DeviceBuffer() {
         if (pointer_ != nullptr) {
             cudaFree(pointer_);
         }
     }
 
+    /** Retourne le pointeur brut utilise par les kernels CUDA. */
     T* get() const { return pointer_; }
 
     DeviceBuffer(const DeviceBuffer&) = delete;
@@ -56,16 +64,19 @@ private:
 
 class CudaEvent {
 public:
+    /** Cree un evenement CUDA utilise pour mesurer le temps GPU. */
     CudaEvent() : event_(nullptr) {
         checkCuda(cudaEventCreate(&event_), "cudaEventCreate");
     }
 
+    /** Detruit l'evenement CUDA a la sortie de sa portee. */
     ~CudaEvent() {
         if (event_ != nullptr) {
             cudaEventDestroy(event_);
         }
     }
 
+    /** Retourne le handle de l'evenement pour les appels CUDA. */
     cudaEvent_t get() const { return event_; }
 
     CudaEvent(const CudaEvent&) = delete;
@@ -75,6 +86,12 @@ private:
     cudaEvent_t event_;
 };
 
+/**
+ * Initialise un etat cuRAND independant pour chaque individu.
+ *
+ * Un thread est associe a un individu afin que les tirages aleatoires des
+ * generations suivantes ne soient pas partages entre plusieurs individus.
+ */
 __global__ void initializeRandomStates(curandState* states, int population,
                                        std::uint64_t seed) {
     const int individual = blockIdx.x * blockDim.x + threadIdx.x;
@@ -84,6 +101,12 @@ __global__ void initializeRandomStates(curandState* states, int population,
     }
 }
 
+/**
+ * Tire uniformement un indice qui n'appartient pas aux indices exclus.
+ *
+ * Le tirage d'un rang dans l'ensemble reduit puis son remappage evite les
+ * boucles de rejet et garantit des indices distincts pour la mutation DE.
+ */
 __device__ int drawIndexExcluding(curandState* state, int population,
                                   int first, int second, int third,
                                   int excludedCount) {
@@ -109,6 +132,12 @@ __device__ int drawIndexExcluding(curandState* state, int population,
     return candidate;
 }
 
+/**
+ * Reduit la population pour trouver le meilleur individu sur le GPU.
+ *
+ * La memoire partagee permet de combiner les minima locaux des threads dans
+ * un seul bloc, puis de recopier la position gagnante dans bestPosition.
+ */
 __global__ void reduceBest(const float* positions, const float* fitnesses,
                            float* bestPosition, float* bestFitness,
                            int dimension, int population) {
@@ -156,6 +185,12 @@ __global__ void reduceBest(const float* positions, const float* fitnesses,
     }
 }
 
+/**
+ * Construit et evalue un vecteur essai par individu.
+ *
+ * Le kernel applique la mutation choisie, le croisement binomial, la
+ * contrainte de domaine et l'evaluation de la fonction objectif.
+ */
 __global__ void buildTrials(
     const float* currentPositions, const float* bestPosition,
     float* trialPositions, float* trialFitnesses, curandState* randomStates,
@@ -221,6 +256,12 @@ __global__ void buildTrials(
     randomStates[individual] = state;
 }
 
+/**
+ * Selectionne le parent ou le vecteur essai selon la regle gloutonne DE.
+ *
+ * Les buffers distincts garantissent que toute la generation lit la meme
+ * population courante avant l'echange des pointeurs.
+ */
 __global__ void selectTrials(
     const float* currentPositions, const float* currentFitnesses,
     const float* trialPositions, const float* trialFitnesses,
@@ -244,6 +285,7 @@ __global__ void selectTrials(
         accept ? trialFitnesses[individual] : currentFitnesses[individual];
 }
 
+/** Calcule en parallele les valeurs optimales des quatre benchmarks. */
 __global__ void checkBenchmarkOptima(float* results) {
     const int function = threadIdx.x + 1;
     if (function > 4) {
@@ -256,6 +298,7 @@ __global__ void checkBenchmarkOptima(float* results) {
     results[function - 1] = benchmarks::fitness(point, 10, function);
 }
 
+/** Calcule le nombre de blocs necessaires pour count threads logiques. */
 int blockCount(int count) {
     if (count <= 0 ||
         count > std::numeric_limits<int>::max() - (kThreads - 1)) {
@@ -266,6 +309,10 @@ int blockCount(int count) {
 
 }  // namespace
 
+/**
+ * Lance la verification CUDA des optima et recopie les quatre resultats.
+ * @param results Tableau hote de sortie de taille quatre.
+ */
 extern "C" void cuda_de_check_benchmarks(float* results) {
     if (results == nullptr) {
         throw std::invalid_argument("Le resultat du test CUDA est nul.");
@@ -279,6 +326,13 @@ extern "C" void cuda_de_check_benchmarks(float* results) {
               "cudaMemcpy verification D2H");
 }
 
+/**
+ * Orchestre l'execution complete de DE sur le GPU.
+ *
+ * Les copies initiales sont effectuees avant la mesure. Chaque generation
+ * construit les essais, selectionne la population suivante et recalcule son
+ * meilleur individu sans synchronisation hote intermediaire.
+ */
 extern "C" void cuda_de(
     const float* initialPositions, const float* initialFitnesses,
     float* bestPosition, float* bestFitness, int function, int dimension,

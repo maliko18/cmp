@@ -18,6 +18,7 @@ namespace {
 
 using benchmarks::de_parameters::Strategy;
 
+/** Convertit un argument texte en entier strictement positif. */
 int parsePositiveInt(const char* text, const char* name) {
     char* end = nullptr;
     const long value = std::strtol(text, &end, 10);
@@ -29,6 +30,7 @@ int parsePositiveInt(const char* text, const char* name) {
     return static_cast<int>(value);
 }
 
+/** Convertit un argument texte en flottant fini et borne. */
 float parseFloat(const char* text, const char* name, float minimum,
                  float maximum) {
     char* end = nullptr;
@@ -41,6 +43,12 @@ float parseFloat(const char* text, const char* name, float minimum,
     return value;
 }
 
+/**
+ * Tire un indice uniforme en excluant les indices deja utilises.
+ *
+ * Cette operation garantit les trois indices distincts requis par les
+ * strategies DE/rand/1 et DE/best/1.
+ */
 int drawIndexExcluding(std::mt19937_64& generator, int population,
                        const int* excluded, int excludedCount) {
     int sorted[3] = {-1, -1, -1};
@@ -61,6 +69,7 @@ int drawIndexExcluding(std::mt19937_64& generator, int population,
     return candidate;
 }
 
+/** Verifie les valeurs optimales des benchmarks dans la version CPU. */
 void checkBenchmarks() {
     constexpr int dimension = 10;
     for (int function = 1; function <= 4; ++function) {
@@ -82,6 +91,7 @@ void checkBenchmarks() {
     }
 }
 
+/** Retourne le nom court d'une strategie DE. */
 const char* strategyName(Strategy strategy) {
     switch (strategy) {
         case Strategy::Rand1: return "rand1";
@@ -91,6 +101,7 @@ const char* strategyName(Strategy strategy) {
     throw std::invalid_argument("Strategie DE inconnue.");
 }
 
+/** Retourne le nom utilise dans la colonne algorithm du CSV. */
 const char* algorithmName(Strategy strategy) {
     switch (strategy) {
         case Strategy::Rand1: return "de-rand1";
@@ -100,6 +111,14 @@ const char* algorithmName(Strategy strategy) {
     throw std::invalid_argument("Strategie DE inconnue.");
 }
 
+/**
+ * Execute DE sur CPU pendant le budget d'evaluations autorise.
+ *
+ * @return Temps d'execution des generations DE, en secondes.
+ *
+ * Les vecteurs de travail sont passes par reference pour eviter des copies et
+ * pour conserver dans positions et fitnesses la population finale.
+ */
 float runDifferentialEvolution(int function, int dimension, int population,
                                std::uint64_t seed, Strategy strategy,
                                float mutationFactor, float crossoverRate,

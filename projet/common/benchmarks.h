@@ -17,15 +17,22 @@
 namespace benchmarks {
 
 struct Domain {
-    float minimum;
-    float maximum;
-    float bias;
+    float minimum;  // Borne inferieure du domaine de recherche.
+    float maximum;  // Borne superieure du domaine de recherche.
+    float bias;     // Minimum theorique ajoute a la fonction.
 };
 
+/** Indique si l'identifiant correspond a l'un des quatre benchmarks. */
 BENCHMARK_HD inline bool is_valid_function(int function) {
     return function >= 1 && function <= 4;
 }
 
+/**
+ * Retourne le domaine de recherche et le biais de la fonction.
+ *
+ * Le biais est la valeur theorique minimale, utilisee pour calculer
+ * l'erreur finale dans les fichiers CSV.
+ */
 BENCHMARK_HD inline Domain domain(int function) {
     switch (function) {
         case 1: return {-100.0f, 100.0f, -450.0f};
@@ -36,12 +43,19 @@ BENCHMARK_HD inline Domain domain(int function) {
     }
 }
 
+/** Retourne la vitesse maximale PSO proportionnelle a la largeur du domaine. */
 BENCHMARK_HD inline float maximum_velocity(int function) {
     const Domain bounds = domain(function);
     return pso_parameters::maximumVelocityFactor *
            (bounds.maximum - bounds.minimum);
 }
 
+/**
+ * Retourne le decalage deterministe de l'optimum pour une coordonnee.
+ *
+ * Le decalage rend les benchmarks non triviaux tout en conservant un optimum
+ * connu, ce qui facilite la validation des algorithmes CPU et GPU.
+ */
 BENCHMARK_HD inline float offset(int coordinate, int function) {
     const Domain bounds = domain(function);
     const int sample = ((coordinate % 101) * 37 + 17) % 101;
@@ -49,6 +63,14 @@ BENCHMARK_HD inline float offset(int coordinate, int function) {
     return centered * (bounds.maximum - bounds.minimum) * 0.2f;
 }
 
+/**
+ * Evalue une fonction benchmark shiftée.
+ *
+ * @param x Vecteur candidat de dimension dim.
+ * @param dim Nombre de coordonnees a lire dans x.
+ * @param function Identifiant du benchmark entre 1 et 4.
+ * @return Fitness a minimiser, incluant le biais de la fonction.
+ */
 BENCHMARK_HD inline float fitness(const float* x, int dim, int function) {
     const Domain bounds = domain(function);
     float result = 0.0f;

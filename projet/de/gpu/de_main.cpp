@@ -16,6 +16,7 @@ namespace {
 
 using benchmarks::de_parameters::Strategy;
 
+/** Convertit un argument texte en entier strictement positif. */
 int parsePositiveInt(const char* text, const char* name) {
     char* end = nullptr;
     const long value = std::strtol(text, &end, 10);
@@ -27,6 +28,7 @@ int parsePositiveInt(const char* text, const char* name) {
     return static_cast<int>(value);
 }
 
+/** Convertit un argument texte en flottant fini compris dans un intervalle. */
 float parseFloat(const char* text, const char* name, float minimum,
                  float maximum) {
     char* end = nullptr;
@@ -39,6 +41,7 @@ float parseFloat(const char* text, const char* name, float minimum,
     return value;
 }
 
+/** Convertit le nom utilisateur en strategie DE interne. */
 Strategy parseStrategy(const std::string& name) {
     if (name == "rand1") {
         return Strategy::Rand1;
@@ -53,6 +56,7 @@ Strategy parseStrategy(const std::string& name) {
         "Strategie attendue : rand1, best1 ou currenttobest1.");
 }
 
+/** Retourne le nom de l'algorithme inscrit dans le CSV. */
 const char* algorithmName(Strategy strategy) {
     switch (strategy) {
         case Strategy::Rand1: return "de-rand1";
@@ -62,6 +66,7 @@ const char* algorithmName(Strategy strategy) {
     throw std::invalid_argument("Strategie DE inconnue.");
 }
 
+/** Verifie simultanement les benchmarks CPU et CUDA. */
 void checkBenchmarks() {
     constexpr int dimension = 10;
     float gpuResults[4] = {};
@@ -90,6 +95,14 @@ void checkBenchmarks() {
 
 }  // namespace
 
+/**
+ * Point d'entree du lanceur DE CUDA.
+ *
+ * Il prepare une population aleatoire par run, calcule sa fitness initiale,
+ * appelle cuda_de et ecrit une ligne CSV contenant le meilleur resultat.
+ *
+ * @return 0 en cas de succes, 1 si une exception est interceptee.
+ */
 int main(int argc, char** argv) {
     try {
         if (argc == 2 && std::string(argv[1]) == "--check-benchmarks") {

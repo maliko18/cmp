@@ -14,6 +14,7 @@
 
 namespace {
 
+/** Convertit un argument texte en entier strictement positif. */
 int parsePositiveInt(const char* text, const char* name) {
     char* end = nullptr;
     const long value = std::strtol(text, &end, 10);
@@ -25,6 +26,7 @@ int parsePositiveInt(const char* text, const char* name) {
     return static_cast<int>(value);
 }
 
+/** Verifie les valeurs optimales des quatre benchmarks en mode CPU. */
 void checkBenchmarks() {
     constexpr int dim = 10;
     for (int function = 1; function <= 4; ++function) {
@@ -46,6 +48,14 @@ void checkBenchmarks() {
     }
 }
 
+/**
+ * Execute les iterations du PSO sequentiel.
+ *
+ * @return Temps d'execution des iterations, en secondes.
+ *
+ * La variante amelioree ajoute une inertie decroissante et une borne de
+ * vitesse afin de limiter les divergences dans les grandes dimensions.
+ */
 float runPso(int function, int dim, int pop, std::uint64_t seed,
              benchmarks::Variant variant,
              std::vector<float>& positions, std::vector<float>& velocities,
@@ -128,6 +138,12 @@ float runPso(int function, int dim, int pop, std::uint64_t seed,
 
 }  // namespace
 
+/**
+ * Point d'entree du lanceur PSO sequentiel.
+ *
+ * Il prepare la population initiale, execute un ou plusieurs runs et ecrit
+ * les resultats au format CSV.
+ */
 int main(int argc, char** argv) {
     try {
         if (argc == 2 && std::string(argv[1]) == "--check-benchmarks") {

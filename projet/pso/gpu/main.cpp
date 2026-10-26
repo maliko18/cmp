@@ -14,6 +14,7 @@
 
 namespace {
 
+/** Convertit un argument texte en entier strictement positif. */
 int parsePositiveInt(const char* text, const char* name) {
     char* end = nullptr;
     const long value = std::strtol(text, &end, 10);
@@ -25,6 +26,7 @@ int parsePositiveInt(const char* text, const char* name) {
     return static_cast<int>(value);
 }
 
+/** Verifie les valeurs optimales des benchmarks CPU et GPU. */
 void checkBenchmarks() {
     constexpr int dim = 10;
     float gpuResults[4] = {};
@@ -51,6 +53,12 @@ void checkBenchmarks() {
     }
 }
 
+/**
+ * Cree la population initiale du PSO.
+ *
+ * Les vitesses sont nulles au depart, chaque position devient son propre
+ * meilleur personnel et le meilleur global est recherche pendant l'initialisation.
+ */
 void initializeSwarm(int function, int dim, int pop, std::uint64_t seed,
                      std::vector<float>& positions,
                      std::vector<float>& velocities,
@@ -93,6 +101,12 @@ void initializeSwarm(int function, int dim, int pop, std::uint64_t seed,
 
 }  // namespace
 
+/**
+ * Point d'entree du lanceur PSO CUDA.
+ *
+ * Parse les options, initialise chaque run, appelle cuda_pso et produit une
+ * ligne CSV contenant la fitness finale et l'erreur par rapport au biais.
+ */
 int main(int argc, char** argv) {
     try {
         if (argc == 2 && std::string(argv[1]) == "--check-benchmarks") {

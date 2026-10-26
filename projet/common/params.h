@@ -9,8 +9,8 @@
 namespace benchmarks {
 
 enum class Variant {
-    Base,
-    Improved
+    Base,      // Parametres historiques : inertie constante.
+    Improved   // Inertie decroissante et vitesse bornee.
 };
 
 namespace pso_parameters {
@@ -22,6 +22,13 @@ constexpr float inertiaMinimum = 0.4f;
 constexpr float maximumVelocityFactor = 0.1f;
 }  // namespace pso_parameters
 
+/**
+ * Calcule le coefficient d'inertie utilise par PSO.
+ *
+ * La variante de base conserve une inertie fixe. La variante amelioree
+ * diminue lineairement l'inertie pour favoriser l'exploration au debut puis
+ * la convergence en fin de recherche.
+ */
 PARAMS_HD inline float inertia(Variant variant, int iteration,
                                int iterations) {
     if (variant == Variant::Base || iterations <= 1) {
@@ -37,9 +44,9 @@ PARAMS_HD inline float inertia(Variant variant, int iteration,
 namespace de_parameters {
 
 enum class Strategy {
-    Rand1,
-    Best1,
-    CurrentToBest1
+    Rand1,           // DE/rand/1.
+    Best1,           // DE/best/1.
+    CurrentToBest1   // DE/current-to-best/1.
 };
 
 constexpr Strategy defaultStrategy = Strategy::Rand1;

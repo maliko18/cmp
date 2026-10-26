@@ -1,0 +1,1084 @@
+# Prompt pour NotebookLM — Explication vidéo du projet PSO et DE sur CPU/GPU
+
+## Rôle attendu
+
+Tu es un enseignant spécialisé en algorithmique, optimisation numérique,
+programmation parallèle et CUDA.
+
+À partir des fichiers du projet fournis dans les sources, prépare une
+explication vidéo pédagogique en français. L'objectif est que je comprenne le
+fonctionnement global de l'étude sans devoir déchiffrer chaque ligne de code.
+
+Je suis étudiant à l'université et je dois présenter ce projet dans le cadre
+d'un module de formation. L'explication doit être progressive, claire,
+rigoureuse et adaptée à quelqu'un qui connaît les bases du C++ mais qui ne
+maîtrise pas encore parfaitement PSO, Differential Evolution et CUDA.
+
+Ne te limite pas à lire le code. Explique :
+
+- le problème scientifique étudié ;
+- les concepts mathématiques ;
+- le rôle de chaque algorithme ;
+- les étapes d'exécution ;
+- la structure du programme ;
+- la signification des paramètres ;
+- la différence entre CPU et GPU ;
+- la manière d'interpréter les résultats ;
+- les limites et les améliorations possibles.
+
+---
+
+# 1. Présentation générale du projet
+
+Commence par expliquer que le projet compare deux algorithmes d'optimisation
+globale :
+
+1. **PSO — Particle Swarm Optimization** ;
+2. **DE — Differential Evolution**.
+
+Les deux algorithmes cherchent à minimiser plusieurs fonctions mathématiques
+de benchmark.
+
+Le projet contient :
+
+- une version séquentielle CPU de PSO ;
+- une version CUDA GPU de PSO ;
+- une version séquentielle CPU de DE ;
+- une version CUDA GPU de DE ;
+- des fonctions benchmarks communes ;
+- un budget d'évaluations commun ;
+- des sorties CSV pour analyser les résultats ;
+- une étude de performance et de qualité des solutions.
+
+Présente l'organisation des fichiers :
+
+```text
+projet/
+├── common/
+│   ├── benchmarks.h
+│   └── params.h
+├── pso/
+│   ├── seq/
+│   │   └── pso_seq.cpp
+│   └── gpu/
+│       ├── main.cpp
+│       ├── kernel.cu
+│       ├── kernel.cpp
+│       └── kernel.h
+├── de/
+│   ├── seq/
+│   │   └── de_seq.cpp
+│   └── gpu/
+│       ├── de_main.cpp
+│       ├── de_kernel.cu
+│       └── de_kernel.h
+└── article/
+    └── article.tex
+```
+
+Explique le rôle de chaque dossier et le lien entre les fichiers CPU, CUDA et
+communs.
+
+---
+
+# 2. Le problème d'optimisation
+
+Explique le problème mathématique général :
+
+```text
+minimiser f(x)
+```
+
+avec :
+
+```text
+x = (x1, x2, ..., xn)
+```
+
+et chaque coordonnée soumise à un domaine :
+
+```text
+minimum <= xi <= maximum
+```
+
+Explique les notions suivantes :
+
+- solution candidate ;
+- position ou vecteur ;
+- fonction objectif ;
+- fitness ;
+- minimum global ;
+- optimum théorique ;
+- dimension du problème ;
+- population ;
+- génération ou itération.
+
+Explique que les fonctions benchmarks du projet sont volontairement décalées.
+L'optimum n'est donc pas nécessairement le vecteur nul, mais il reste connu
+grâce à la fonction `offset`.
+
+---
+
+# 3. Les fonctions benchmarks
+
+Explique le fichier commun `common/benchmarks.h`.
+
+Présente les quatre fonctions :
+
+## 3.1. Sphere
+
+Explique la forme générale :
+
+```text
+f(x) = somme((xi - oi)^2) + biais
+```
+
+Caractéristiques :
+
+- fonction relativement simple ;
+- forme convexe ;
+- utile pour tester la convergence générale ;
+- optimum lorsque `xi = oi`.
+
+## 3.2. Rastrigin
+
+Explique la forme générale :
+
+```text
+f(x) = somme((xi - oi)^2 - 10 cos(2π(xi - oi)) + 10) + biais
+```
+
+Caractéristiques :
+
+- nombreux minima locaux ;
+- fonction multimodale ;
+- permet d'évaluer la capacité d'exploration ;
+- plus difficile qu'une fonction convexe.
+
+## 3.3. Rosenbrock
+
+Explique que Rosenbrock possède une vallée étroite et courbée.
+
+Caractéristiques :
+
+- l'optimum est difficile à atteindre ;
+- la fonction teste la précision de la convergence ;
+- un algorithme peut progresser dans la bonne direction sans atteindre
+  rapidement le minimum.
+
+## 3.4. Griewank
+
+Explique que Griewank combine :
+
+- un terme quadratique ;
+- un produit de cosinus ;
+- plusieurs minima locaux.
+
+Caractéristiques :
+
+- fonction multimodale ;
+- interactions entre les dimensions ;
+- test intéressant pour la robustesse des algorithmes.
+
+Pour chaque benchmark, explique :
+
+- son domaine de recherche ;
+- son biais ;
+- la position de son optimum ;
+- pourquoi le biais est ajouté ;
+- comment `fitness()` calcule la valeur ;
+- pourquoi `error_vs_bias = minimum - bias`.
+
+Explique également le rôle de :
+
+```cpp
+domain(function)
+is_valid_function(function)
+offset(coordinate, function)
+fitness(x, dim, function)
+```
+
+---
+
+# 4. Le budget d'évaluations
+
+Explique précisément la règle :
+
+```text
+budget = 10 000 × dimension
+```
+
+Explique pourquoi on utilise un budget d'évaluations au lieu de comparer
+uniquement le nombre d'itérations.
+
+Décris le calcul :
+
+```cpp
+totalGenerations = budget / population
+```
+
+Explique que :
+
+- la population initiale consomme déjà des évaluations ;
+- les générations suivantes évaluent les vecteurs candidats ;
+- le budget permet de comparer plus équitablement des populations différentes ;
+- le reste non divisible par la population n'est pas utilisé.
+
+Donne un exemple avec :
+
+```text
+dimension = 100
+population = 100
+```
+
+Calcul :
+
+```text
+budget = 1 000 000 évaluations
+nombre total de populations évaluées = 10 000
+```
+
+Explique la différence éventuelle entre :
+
+- une itération ;
+- une génération ;
+- une évaluation d'un individu ;
+- une évaluation complète d'une population.
+
+---
+
+# 5. PSO : principe général
+
+Explique clairement ce qu'est le Particle Swarm Optimization.
+
+Utilise l'analogie d'un groupe d'oiseaux ou d'un essaim :
+
+- chaque particule représente une solution ;
+- chaque particule possède une position ;
+- chaque particule possède une vitesse ;
+- chaque particule mémorise sa meilleure position ;
+- l'essaim mémorise la meilleure position globale.
+
+Présente les variables :
+
+```text
+x_i : position de la particule i
+v_i : vitesse de la particule i
+p_i : meilleure position personnelle
+g   : meilleure position globale
+```
+
+Explique l'équation :
+
+```text
+v_i(t+1) =
+    ω v_i(t)
+    + c1 r1 (p_i - x_i(t))
+    + c2 r2 (g - x_i(t))
+```
+
+Puis :
+
+```text
+x_i(t+1) = x_i(t) + v_i(t+1)
+```
+
+Explique chaque terme :
+
+- `ω` : inertie ;
+- `c1` : coefficient cognitif ;
+- `c2` : coefficient social ;
+- `r1` et `r2` : nombres aléatoires ;
+- terme cognitif : retour vers la meilleure position personnelle ;
+- terme social : attraction vers la meilleure position de l'essaim.
+
+Dans le projet :
+
+```text
+c1 = 1.5
+c2 = 1.5
+```
+
+---
+
+# 6. Les deux variantes PSO
+
+Explique la variante de base :
+
+```text
+omega = 0.5
+```
+
+Elle utilise :
+
+- une inertie constante ;
+- aucune limitation particulière de la vitesse.
+
+Explique la variante améliorée :
+
+- inertie initiale de `0.9` ;
+- inertie finale de `0.4` ;
+- diminution linéaire de l'inertie ;
+- vitesse limitée à une fraction de la largeur du domaine.
+
+Explique pourquoi cette amélioration est utile :
+
+- au début, une forte inertie favorise l'exploration ;
+- à la fin, une inertie plus faible favorise la convergence ;
+- la limitation de vitesse évite que les particules quittent trop brutalement
+  les zones prometteuses ;
+- elle réduit les risques de divergence dans les grandes dimensions.
+
+Explique la fonction :
+
+```cpp
+inertia(variant, iteration, iterations)
+```
+
+et le rôle de :
+
+```cpp
+maximum_velocity(function)
+```
+
+---
+
+# 7. Initialisation du PSO
+
+Explique l'initialisation réalisée dans :
+
+```cpp
+initializeSwarm()
+```
+
+ou directement dans la version séquentielle.
+
+Étapes :
+
+1. choisir le domaine de la fonction ;
+2. générer aléatoirement les positions ;
+3. initialiser toutes les vitesses à zéro ;
+4. considérer chaque position initiale comme son propre meilleur personnel ;
+5. calculer la fitness de chaque particule ;
+6. rechercher le meilleur global initial.
+
+Explique les tableaux :
+
+```text
+positions
+velocities
+pBests
+pBestFitness
+gBest
+bestFitness
+```
+
+Explique pourquoi les positions sont stockées sous forme aplatie :
+
+```text
+particle * dimension + coordinate
+```
+
+---
+
+# 8. Déroulement d'une itération PSO
+
+Présente une itération complète dans l'ordre exact :
+
+1. calcul de l'inertie ;
+2. génération des nombres aléatoires ;
+3. calcul de la nouvelle vitesse ;
+4. limitation éventuelle de la vitesse ;
+5. calcul de la nouvelle position ;
+6. application des bornes du domaine ;
+7. calcul de la fitness ;
+8. mise à jour du meilleur personnel ;
+9. mise à jour du meilleur global.
+
+Explique la différence entre :
+
+```text
+pBest
+```
+
+et :
+
+```text
+gBest
+```
+
+Explique pourquoi le meilleur global doit être calculé après la mise à jour
+des meilleurs personnels.
+
+---
+
+# 9. PSO séquentiel contre PSO CUDA
+
+Compare les fichiers :
+
+```text
+pso/seq/pso_seq.cpp
+pso/gpu/main.cpp
+pso/gpu/kernel.cu
+```
+
+Explique que la version séquentielle exécute les particules et leurs
+coordonnées sur le CPU avec des boucles classiques.
+
+Dans la version CUDA :
+
+- un thread traite une coordonnée de particule ;
+- les positions et vitesses sont stockées dans la mémoire GPU ;
+- les nombres aléatoires sont générés avec cuRAND ;
+- les kernels exécutent les opérations en parallèle.
+
+Présente les kernels CUDA PSO :
+
+```cpp
+initializeRandomStates()
+updateParticles()
+updatePersonalBests()
+reduceGlobalBest()
+```
+
+Explique le rôle de chacun.
+
+---
+
+# 10. Les deux modes de calcul de gBest
+
+Le programme CUDA accepte :
+
+```text
+--gbest cpu
+--gbest gpu
+```
+
+## Mode CPU
+
+Explique le fonctionnement :
+
+1. le GPU met à jour les particules ;
+2. le GPU met à jour les meilleurs personnels ;
+3. les meilleurs personnels sont copiés du GPU vers le CPU ;
+4. le CPU recherche le meilleur global ;
+5. le meilleur global est recopié vers le GPU.
+
+Avantages :
+
+- simple à comprendre ;
+- facile à vérifier.
+
+Inconvénients :
+
+- transferts CPU/GPU à chaque itération ;
+- synchronisations fréquentes ;
+- performances potentiellement plus faibles.
+
+## Mode GPU
+
+Explique que :
+
+1. les meilleurs personnels restent sur le GPU ;
+2. `reduceGlobalBest()` réalise une réduction parallèle ;
+3. le meilleur global est calculé sans transfert intermédiaire.
+
+Avantages :
+
+- moins de transferts ;
+- meilleure exploitation du GPU ;
+- meilleure scalabilité.
+
+Explique le rôle de la mémoire partagée CUDA dans la réduction.
+
+---
+
+# 11. DE : principe général
+
+Explique ce qu'est Differential Evolution.
+
+Contrairement à PSO, DE ne manipule pas principalement des vitesses. Il crée
+de nouveaux candidats à partir des différences entre plusieurs individus de
+la population.
+
+Pour chaque individu cible `x_i` :
+
+1. choisir des individus distincts ;
+2. construire un vecteur mutant ;
+3. appliquer un croisement avec l'individu cible ;
+4. borner le candidat ;
+5. évaluer sa fitness ;
+6. conserver le meilleur entre le parent et l'essai.
+
+Explique que DE travaille avec :
+
+```text
+population courante
+vecteur mutant
+vecteur essai
+sélection gloutonne
+```
+
+---
+
+# 12. Les stratégies DE
+
+Explique les trois stratégies du projet.
+
+## 12.1. DE/rand/1
+
+Formule :
+
+```text
+v = x_r1 + F(x_r2 - x_r3)
+```
+
+Explique :
+
+- `r1`, `r2`, `r3` sont distincts ;
+- l'individu cible est exclu ;
+- la différence entre deux individus fournit une direction d'exploration ;
+- cette stratégie conserve une grande diversité.
+
+Paramètre :
+
+```text
+F
+```
+
+qui contrôle l'amplitude de la mutation.
+
+## 12.2. DE/best/1
+
+Formule :
+
+```text
+v = x_best + F(x_r1 - x_r2)
+```
+
+Explique :
+
+- la mutation part du meilleur individu connu ;
+- la convergence est souvent plus rapide ;
+- le risque de convergence prématurée est plus élevé.
+
+## 12.3. DE/current-to-best/1
+
+Formule :
+
+```text
+v =
+    x_i
+    + F(x_best - x_i)
+    + F(x_r1 - x_r2)
+```
+
+Explique :
+
+- l'individu est attiré vers le meilleur ;
+- une différence aléatoire conserve de l'exploration ;
+- le comportement est intermédiaire entre exploitation et exploration.
+
+---
+
+# 13. Paramètres DE
+
+Explique les paramètres :
+
+## Facteur de mutation `F`
+
+Dans le projet :
+
+```text
+0 <= F <= 2
+valeur par défaut : F = 0.5
+```
+
+Interprétation :
+
+- petit `F` : modifications faibles, recherche locale ;
+- grand `F` : déplacements plus importants, exploration ;
+- valeur trop élevée : mouvements instables ou candidats souvent hors domaine.
+
+## Taux de croisement `CR`
+
+Dans le projet :
+
+```text
+0 <= CR <= 1
+valeur par défaut : CR = 0.9
+```
+
+Interprétation :
+
+- `CR` faible : le vecteur essai ressemble davantage au parent ;
+- `CR` élevé : davantage de coordonnées mutées sont utilisées ;
+- une coordonnée est toujours forcée à provenir du mutant.
+
+## Population
+
+La population doit contenir au moins quatre individus car DE doit choisir :
+
+```text
+individu cible
+r1
+r2
+r3
+```
+
+Tous les indices de mutation doivent être distincts.
+
+---
+
+# 14. Déroulement d'une génération DE
+
+Décris précisément l'ordre des opérations :
+
+1. sélectionner les indices `r1`, `r2`, `r3` ;
+2. calculer le vecteur mutant ;
+3. sélectionner la coordonnée forcée ;
+4. appliquer le crossover binomial ;
+5. borner chaque coordonnée ;
+6. calculer la fitness du vecteur essai ;
+7. comparer essai et parent ;
+8. écrire la population suivante ;
+9. mettre à jour le meilleur individu.
+
+Explique pourquoi il est important que tous les vecteurs essais soient
+construits à partir de la même population courante.
+
+Explique également pourquoi la version CUDA utilise des buffers séparés :
+
+```text
+currentPositions
+nextPositions
+trialPositions
+```
+
+Cela évite qu'un individu déjà mis à jour influence les autres individus de la
+même génération.
+
+---
+
+# 15. DE séquentiel contre DE CUDA
+
+Compare :
+
+```text
+de/seq/de_seq.cpp
+de/gpu/de_main.cpp
+de/gpu/de_kernel.cu
+```
+
+Version CPU :
+
+- boucles sur les générations ;
+- boucles sur les individus ;
+- boucles sur les coordonnées ;
+- génération aléatoire avec `std::mt19937_64`.
+
+Version GPU :
+
+- un thread par individu ;
+- boucle interne sur les coordonnées ;
+- génération aléatoire avec cuRAND ;
+- sélection exécutée en parallèle ;
+- réduction du meilleur exécutée sur le GPU.
+
+Présente les kernels DE :
+
+```cpp
+initializeRandomStates()
+buildTrials()
+selectTrials()
+reduceBest()
+```
+
+Explique le rôle de chacun.
+
+---
+
+# 16. Organisation mémoire CUDA
+
+Explique les buffers utilisés par DE CUDA :
+
+```text
+currentPositionsA
+currentPositionsB
+trialPositions
+currentFitnessA
+currentFitnessB
+trialFitnesses
+deviceBestPosition
+deviceBestFitness
+randomStates
+```
+
+Explique le système de double buffering :
+
+```text
+population courante
+        ↓
+population suivante
+        ↓
+échange des pointeurs
+```
+
+Explique pourquoi deux populations sont utilisées :
+
+- éviter les écritures concurrentes dangereuses ;
+- garantir que tous les individus lisent la même génération ;
+- faciliter l'exécution parallèle.
+
+Explique également le rôle de la classe :
+
+```cpp
+DeviceBuffer<T>
+```
+
+et de la classe :
+
+```cpp
+CudaEvent
+```
+
+---
+
+# 17. Gestion des erreurs
+
+Explique les mécanismes de validation :
+
+```cpp
+checkCuda()
+checkKernelLaunch()
+```
+
+Explique pourquoi il est important de vérifier :
+
+- les allocations GPU ;
+- les copies mémoire ;
+- les lancements de kernels ;
+- les synchronisations ;
+- les événements CUDA.
+
+Explique les contrôles d'entrée :
+
+- fonction comprise entre 1 et 4 ;
+- dimension positive ;
+- population positive ;
+- population minimale pour DE ;
+- `F` compris entre 0 et 2 ;
+- `CR` compris entre 0 et 1 ;
+- pointeurs non nuls ;
+- taille mémoire valide.
+
+---
+
+# 18. Comparaison PSO et DE
+
+Construis un tableau de comparaison avec les colonnes suivantes :
+
+| Critère | PSO | DE |
+|---|---|---|
+| Représentation | Position et vitesse | Individus et vecteurs mutants |
+| Mémoire individuelle | Meilleur personnel | Parent courant |
+| Mémoire globale | Meilleur global | Meilleur utilisé selon la stratégie |
+| Mécanisme principal | Attraction cognitive et sociale | Différences entre individus |
+| Paramètres principaux | omega, c1, c2 | F, CR |
+| Diversité | Contrôlée par les vitesses et le hasard | Contrôlée par les différences |
+| Risque principal | Divergence ou convergence prématurée | Perte de diversité ou convergence prématurée |
+| Parallélisation | Coordonnées ou particules | Individus |
+| Sélection | Mise à jour des meilleurs personnels | Parent contre vecteur essai |
+| GPU | Kernels de mise à jour et réduction | Kernels de mutation, sélection et réduction |
+
+Explique ensuite :
+
+- dans quels cas PSO peut converger rapidement ;
+- dans quels cas DE peut être plus robuste ;
+- pourquoi aucune méthode n'est toujours meilleure ;
+- pourquoi les résultats doivent être évalués statistiquement.
+
+---
+
+# 19. Comparaison CPU et GPU
+
+Explique que le GPU ne change pas nécessairement l'algorithme mathématique.
+Il change surtout la manière de l'exécuter.
+
+Compare :
+
+## CPU
+
+- exécution séquentielle ;
+- contrôle simple ;
+- moins de contraintes mémoire ;
+- meilleur pour les petites configurations ;
+- temps de calcul qui augmente fortement avec la dimension et la population.
+
+## GPU
+
+- exécution parallèle ;
+- beaucoup de threads ;
+- mémoire globale et mémoire partagée ;
+- coût des transferts CPU/GPU ;
+- avantage surtout pour les grandes populations ou dimensions.
+
+Explique pourquoi le GPU peut parfois ne pas être plus rapide :
+
+- petite population ;
+- faible dimension ;
+- temps de lancement des kernels ;
+- transferts mémoire ;
+- réductions fréquentes ;
+- coût de synchronisation.
+
+---
+
+# 20. Paramètres de lancement
+
+Présente les commandes principales.
+
+## DE séquentiel
+
+```bash
+./de_seq <fonction> <dimension> <population> <runs> \
+  [--strategie rand1|best1|currenttobest1] \
+  [--F 0.5] [--CR 0.9]
+```
+
+## DE CUDA
+
+```bash
+./de_gpu <fonction> <dimension> <population> <runs> \
+  [--strategie rand1|best1|currenttobest1] \
+  [--F 0.5] [--CR 0.9]
+```
+
+## PSO séquentiel
+
+```bash
+./pso_seq <fonction> <dimension> <population> <runs> \
+  [--variante base|ameliore]
+```
+
+## PSO CUDA
+
+```bash
+./pso_gpu <fonction> <dimension> <population> <runs> \
+  [--gbest cpu|gpu] \
+  [--variante base|ameliore]
+```
+
+Explique chaque paramètre :
+
+- fonction ;
+- dimension ;
+- population ;
+- nombre de runs ;
+- stratégie ;
+- `F` ;
+- `CR` ;
+- mode `gBest` ;
+- variante PSO.
+
+---
+
+# 21. Format des résultats
+
+Explique l'en-tête CSV :
+
+```text
+algo,version,fonction,dim,pop,run,seed,minimum,erreur_vs_bias,temps_s
+```
+
+Détaille chaque colonne :
+
+- `algo` : PSO ou DE ;
+- `version` : séquentiel, CUDA ou variante ;
+- `fonction` : benchmark utilisé ;
+- `dim` : dimension ;
+- `pop` : taille de la population ;
+- `run` : numéro de l'exécution ;
+- `seed` : graine aléatoire ;
+- `minimum` : meilleure fitness obtenue ;
+- `erreur_vs_bias` : distance à l'optimum théorique ;
+- `temps_s` : temps d'exécution en secondes.
+
+Explique comment interpréter les résultats :
+
+- une erreur proche de zéro signifie une bonne convergence ;
+- un temps plus faible signifie une meilleure performance ;
+- une seule exécution ne suffit pas pour conclure ;
+- il faut comparer moyenne, médiane, écart-type et dispersion.
+
+---
+
+# 22. Méthode correcte pour comparer les algorithmes
+
+Explique qu'une comparaison sérieuse doit utiliser :
+
+- les mêmes fonctions ;
+- les mêmes dimensions ;
+- les mêmes tailles de population ;
+- le même budget d'évaluations ;
+- plusieurs seeds ;
+- le même nombre de runs ;
+- les mêmes critères de mesure.
+
+Recommande au minimum :
+
+```text
+20 à 30 runs par configuration
+```
+
+Pour chaque configuration, calculer :
+
+- moyenne ;
+- médiane ;
+- minimum ;
+- maximum ;
+- écart-type ;
+- intervalle de confiance ;
+- temps moyen ;
+- speedup GPU/CPU.
+
+Explique que les générateurs aléatoires CPU et GPU ne produisent pas
+nécessairement les mêmes trajectoires. Il faut donc comparer les distributions
+de résultats et non les lignes individuelles.
+
+---
+
+# 23. Vérification du fonctionnement
+
+Explique le test :
+
+```bash
+./de_seq --check-benchmarks
+./de_gpu --check-benchmarks
+./pso_seq --check-benchmarks
+./pso_gpu --check-benchmarks
+```
+
+Explique que ce test vérifie si les fonctions CPU et GPU donnent bien le biais
+attendu à leur optimum théorique.
+
+Présente ensuite des tests simples :
+
+```bash
+./de_seq 1 10 50 3
+./de_gpu 1 10 50 3
+./pso_seq 1 10 50 3
+./pso_gpu 1 10 50 3 --gbest gpu --variante ameliore
+```
+
+Explique ce qu'il faut vérifier :
+
+- absence d'erreur ;
+- résultats numériques finis ;
+- positions dans les bornes ;
+- convergence raisonnable ;
+- temps mesuré ;
+- cohérence du CSV.
+
+---
+
+# 24. Limites actuelles du projet
+
+Explique honnêtement les limites :
+
+1. Les résultats sont stochastiques.
+2. Les générateurs CPU et GPU sont différents.
+3. Une seule exécution ne suffit pas.
+4. Le nombre de runs préliminaire peut être insuffisant.
+5. Les temps CPU et GPU ne couvrent pas forcément exactement les mêmes
+   opérations.
+6. La version CUDA doit être testée sur une vraie carte NVIDIA.
+7. Le GPU peut être moins intéressant pour de petites configurations.
+8. Les paramètres `F`, `CR`, `omega`, `c1` et `c2` influencent fortement les
+   résultats.
+9. La comparaison doit distinguer qualité de solution et temps d'exécution.
+10. Une meilleure vitesse ne signifie pas automatiquement une meilleure
+    solution.
+
+---
+
+# 25. Scénario pédagogique recommandé pour la vidéo
+
+Organise la vidéo selon ce plan :
+
+## Partie 1 — Contexte
+
+Présenter le problème d'optimisation et l'objectif de l'étude.
+
+## Partie 2 — Benchmarks
+
+Expliquer les quatre fonctions, les domaines, les biais et les optima.
+
+## Partie 3 — PSO
+
+Expliquer l'intuition, les équations, les paramètres et le déroulement.
+
+## Partie 4 — DE
+
+Expliquer l'intuition, les stratégies, les paramètres et le déroulement.
+
+## Partie 5 — CPU et GPU
+
+Expliquer les différences d'exécution et les kernels CUDA.
+
+## Partie 6 — Architecture du code
+
+Relier les fonctions principales aux fichiers du projet.
+
+## Partie 7 — Résultats
+
+Expliquer le CSV, l'erreur par rapport au biais, le temps et les statistiques.
+
+## Partie 8 — Comparaison PSO/DE
+
+Présenter les avantages, limites et cas d'utilisation.
+
+## Partie 9 — Conclusion
+
+Résumer ce que le projet démontre et ce qu'il faudrait encore améliorer.
+
+---
+
+# 26. Style attendu pour la vidéo
+
+Utilise :
+
+- un vocabulaire simple mais techniquement exact ;
+- des schémas conceptuels ;
+- des exemples numériques simples ;
+- des tableaux comparatifs ;
+- des animations pour montrer les particules et les vecteurs ;
+- une visualisation du passage CPU vers GPU ;
+- une explication étape par étape ;
+- des rappels réguliers des paramètres.
+
+Évite :
+
+- de lire le code ligne par ligne ;
+- de supposer que je connais déjà CUDA ;
+- de présenter uniquement les formules sans intuition ;
+- de confondre itération, génération et évaluation ;
+- de comparer les algorithmes sur un seul run ;
+- de présenter le GPU comme automatiquement meilleur.
+
+À la fin de la vidéo, je dois être capable de répondre aux questions suivantes :
+
+1. Quel problème le projet cherche-t-il à résoudre ?
+2. Que représente une particule dans PSO ?
+3. Que représentent `pBest` et `gBest` ?
+4. Quelle est la différence entre PSO et DE ?
+5. À quoi servent `F` et `CR` ?
+6. Pourquoi DE exige-t-il des individus distincts ?
+7. Pourquoi utilise-t-on plusieurs buffers CUDA ?
+8. Comment le GPU parallélise-t-il le calcul ?
+9. Pourquoi existe-t-il un mode `gBest CPU` et un mode `gBest GPU` ?
+10. Comment interpréter `minimum` et `erreur_vs_bias` ?
+11. Pourquoi faut-il plusieurs runs ?
+12. Dans quelles situations le GPU est-il réellement avantageux ?
+13. Quelles sont les limites de cette étude ?
+14. Comment présenter ce projet devant un jury universitaire ?
